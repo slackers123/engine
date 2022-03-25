@@ -1,3 +1,6 @@
+#[macro_use]
+extern crate tarator;
+
 use winit::{
     event::*,
     event_loop::{ControlFlow, EventLoop},
@@ -9,7 +12,12 @@ mod render;
 use render::Renderer;
 
 fn main() {
+
     env_logger::init();
+
+    // EXAMPLE CALL FROM log.rs
+    TR_ERROR!("test\n\n\n\n\n");
+
     let event_loop = EventLoop::new();
     let window = WindowBuilder::new().build(&event_loop).unwrap();
 

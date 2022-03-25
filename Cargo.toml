@@ -14,3 +14,5 @@ wgpu = "0.12"
 pollster = "0.2"
 image = "*"
 bytemuck = { version = "1.4", features = [ "derive" ] }
+
+tarator = { path = "tarator"}
