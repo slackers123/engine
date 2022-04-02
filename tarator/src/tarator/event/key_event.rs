@@ -44,10 +44,7 @@ impl KeyPressedEvent {
     fn get_repeat_count(&self) -> u32 { return self.repeat_count; }
 }
 
-impl Event for KeyPressedEvent {
-    fn get_category(&self) -> &EventCategory { return &self.event_category; }
-    fn get_type(&self) -> &EventType { return &self.event_type; }
-}
+crate::INTERN_IMPLEVENT!(KeyPressedEvent);
 
 impl KeyEvent for KeyPressedEvent {
     fn get_key_code(&self) -> &u32 { return &self.key_code; }
@@ -75,10 +72,7 @@ impl Default for KeyReleasedEvent {
     }
 }
 
-impl Event for KeyReleasedEvent {
-    fn get_category(&self) -> &EventCategory { return &self.event_category; }
-    fn get_type(&self) -> &EventType { return &self.event_type; }
-}
+crate::INTERN_IMPLEVENT!(KeyReleasedEvent);
 
 impl KeyEvent for KeyReleasedEvent {
     fn get_key_code(&self) -> &u32 { return &self.key_code; }
@@ -107,10 +101,7 @@ impl Default for KeyTypedEvent {
     }
 }
 
-impl Event for KeyTypedEvent {
-    fn get_category(&self) -> &EventCategory { return &self.event_category; }
-    fn get_type(&self) -> &EventType { return &self.event_type; }
-}
+crate::INTERN_IMPLEVENT!(KeyTypedEvent);
 
 impl KeyEvent for KeyTypedEvent {
     fn get_key_code(&self) -> &u32 { return &self.key_code; }

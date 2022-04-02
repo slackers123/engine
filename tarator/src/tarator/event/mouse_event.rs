@@ -43,10 +43,7 @@ impl MouseMovedEvent {
     fn get_move_y(&self) -> &f32 { return &self.move_y; }
 }
 
-impl Event for MouseMovedEvent {
-    fn get_category(&self) -> &EventCategory { return &self.event_category; }
-    fn get_type(&self) -> &EventType { return &self.event_type; }
-}
+crate::INTERN_IMPLEVENT!(MouseMovedEvent);
 
 
 /////////////////////////////////////////////////////////////////
@@ -81,11 +78,7 @@ impl MouseScrolledEvent {
     fn get_offset_y(&self) -> &f32 { return &self.offset_y; }
 }
 
-impl Event for MouseScrolledEvent {
-    fn get_category(&self) -> &EventCategory { return &self.event_category; }
-    fn get_type(&self) -> &EventType { return &self.event_type; }
-}
-
+crate::INTERN_IMPLEVENT!(MouseScrolledEvent);
 
 
 
@@ -118,10 +111,7 @@ impl Default for MouseKeyPressedEvent {
     }
 }
 
-impl Event for MouseKeyPressedEvent {
-    fn get_category(&self) -> &EventCategory { return &self.event_category; }
-    fn get_type(&self) -> &EventType { return &self.event_type; }
-}
+crate::INTERN_IMPLEVENT!(MouseKeyPressedEvent);
 
 impl MouseKeyEvent for MouseKeyPressedEvent {
     fn get_key_code(&self) -> &u32 { return &self.key_code; }
@@ -150,10 +140,7 @@ impl Default for MouseKeyReleasedEvent {
     }
 }
 
-impl Event for MouseKeyReleasedEvent {
-    fn get_category(&self) -> &EventCategory { return &self.event_category; }
-    fn get_type(&self) -> &EventType { return &self.event_type; }
-}
+crate::INTERN_IMPLEVENT!(MouseKeyReleasedEvent);
 
 impl MouseKeyEvent for MouseKeyReleasedEvent {
     fn get_key_code(&self) -> &u32 { return &self.key_code; }

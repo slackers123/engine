@@ -42,11 +42,7 @@ impl WindowResizeEvent {
     fn get_size_y(&self) -> &u32 { return &self.size_y; }
 }
 
-impl Event for WindowResizeEvent {
-    fn get_category(&self) -> &EventCategory { return &self.event_category; }
-    fn get_type(&self) -> &EventType { return &self.event_type; }
-}
-
+crate::INTERN_IMPLEVENT!(WindowResizeEvent);
 
 /////////////////////////////////////////////////////////////////
 /// # WindowCloseEvent
@@ -69,6 +65,7 @@ impl Default for WindowCloseEvent {
     }
 }
 
+crate::INTERN_IMPLEVENT!(WindowCloseEvent);
 
 /////////////////////////////////////////////////////////////////
 /// # ApplicationTickEvent
@@ -91,6 +88,7 @@ impl Default for ApplicationTickEvent {
     }
 }
 
+crate::INTERN_IMPLEVENT!(ApplicationTickEvent);
 
 /////////////////////////////////////////////////////////////////
 /// # ApplicationUpdateEvent
@@ -113,6 +111,7 @@ impl Default for ApplicationUpdateEvent {
     }
 }
 
+crate::INTERN_IMPLEVENT!(ApplicationUpdateEvent);
 
 /////////////////////////////////////////////////////////////////
 /// # ApplicationRenderEvent
@@ -134,3 +133,5 @@ impl Default for ApplicationRenderEvent {
         }
     }
 }
+
+crate::INTERN_IMPLEVENT!(ApplicationRenderEvent);
