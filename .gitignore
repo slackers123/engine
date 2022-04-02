@@ -2,3 +2,7 @@
 /render-tests/test1/Cargo.lock
 /tar-script/target
 /tar-script/Cargo.lock
+/tarator/target
+/tarator/Cargo.lock
+/sandbox/target
+/sandbox/Cargo.lock
