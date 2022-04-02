@@ -1,0 +1,8 @@
+#def entry = main;
+#use std::log;
+
+fn main() -> int {
+    log((10+10)/20);
+
+    return 10;
+}

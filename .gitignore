@@ -1,1 +1,4 @@
-/target
+/render-tests/test1/target
+/render-tests/test1/Cargo.lock
+/tar-script/target
+/tar-script/Cargo.lock
