@@ -1,3 +1,4 @@
+#[derive(Debug)]
 pub enum BinOp {// types of binary operation
     Plus,
     Minus,
@@ -5,6 +6,7 @@ pub enum BinOp {// types of binary operation
     Div,
 }
 
+#[derive(Debug)]
 pub enum AstNode {
     Definitions(Vec<AstNode>), // The value is the array of type Definition or Import
     Definition{
