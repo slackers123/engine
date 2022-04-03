@@ -10,7 +10,9 @@ import = 	     { "#use" ~ ident ~ ("::" ~ident)* ~ EOS }
 
 functions =      { funcDef+ }
 
-funcDef = 		 { "fn" ~ ident ~ "(" ~ args? ~ ")" ~ ("->" ~ Type+)? ~ "{" ~ block ~ "}" }
+funcDef = 		 { "fn" ~ ident ~ "(" ~ args? ~ ")" ~ ("->" ~ retTy)? ~ "{" ~ block ~ "}" }
+
+retTy =       { Type }
 
 block = {
 	(

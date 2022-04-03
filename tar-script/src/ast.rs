@@ -17,14 +17,15 @@ pub enum AstNode {
     FuncDefs(Vec<AstNode>), // array of function definitions (just functions in .pest)
     FuncDef {
         ident: String, // name of the function
-        args: Vec<AstNode>, // arguments the function requires (optional)
-        ret_ty: String, // type to be returned (optional)
+        args: Option<Vec<AstNode>>, // arguments the function requires (optional)
+        ret_ty: Option<String>, // type to be returned (optional)
         block: Vec<AstNode>, // The function block (code inside the function)
     },
     Arg{
         ident: String, // name of the argument
         ty: String, // type of the argument
     },
+    RetTy(String),
     Integer(i32),
     Float(f32),
     String(String),
