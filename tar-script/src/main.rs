@@ -16,31 +16,6 @@ use pest::iterators::{Pair, Pairs};
 #[grammar = "tar-script.pest"]
 pub struct TarParser;
 
-#[derive(Debug)]
-pub enum VarType {
-    Int,
-    String,
-    Function,
-}
-
-#[derive(Debug)]
-pub struct Var {
-    ty: VarType,
-    val: Box<dyn Any>,
-}
-
-fn get_var(str: Pair<Rule>) -> Var {
-    match str.as_rule() {
-        Rule::int => {
-            return Var {ty: VarType::Int,val: Box::new(10)}
-        }
-        _=>(panic!())
-    }
-}
-
-fn interpret() {
-
-}
 
 fn parse_to_ast(parsed: Pairs<Rule>) -> (Vec<ast::AstNode>, HashMap<String, ast::AstNode>){
     
@@ -83,8 +58,16 @@ fn parse_fn(func: Pair<Rule>, name: String) -> ast::AstNode {
 }
 
 fn parse_fn_block(func: Pair<Rule>) -> Vec<ast::AstNode> {
+    let block = vec![];
 
-    return vec![];
+    let mut inner = func.into_inner();
+
+    for i in inner {
+        if i.as_rule() == Rule::block {
+            println!("func: {:?}", i);
+        }
+    }
+    return block;
 }
 
 

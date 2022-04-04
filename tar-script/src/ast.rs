@@ -14,7 +14,6 @@ pub enum AstNode {
         value: String,
     },
     Import(Vec<String>), // The string vector is the "path" to import e.g. std::log -> ["std", "log"]
-    FuncDefs(Vec<AstNode>), // array of function definitions (just functions in .pest)
     FuncDef {
         ident: String, // name of the function
         args: Option<Vec<AstNode>>, // arguments the function requires (optional)
@@ -25,7 +24,6 @@ pub enum AstNode {
         ident: String, // name of the argument
         ty: String, // type of the argument
     },
-    RetTy(String),
     Integer(i32),
     Float(f32),
     String(String),
