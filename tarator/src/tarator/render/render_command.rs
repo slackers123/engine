@@ -1,5 +1,5 @@
 /// # RenderCommand
-/// Calls the methods defined in render_api from platform/* 
+/// Calls the methods which are defined in render_api from platform/* 
 
 use crate::tarator::render::render_api::RenderApi;
 
