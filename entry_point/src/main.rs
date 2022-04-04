@@ -1,7 +1,13 @@
 #[macro_use]
 extern crate tarator;
 
+use tarator::tarator::application::Application;
+use sandbox::SandboxApplication;
+
 fn main() {
-    env_logger::init();    
-    TR_ERROR!("TEST ERROR\n");
+    TR_LOG_INIT!();
+    TR_ERROR!("Initialized Log!\n");
+
+    let application = SandboxApplication::create_application();
+    application.run();
 }
