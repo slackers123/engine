@@ -1,8 +1,19 @@
+# render-tests
 /render-tests/test1/target
 /render-tests/test1/Cargo.lock
+
+# tar-script
 /tar-script/target
 /tar-script/Cargo.lock
+
+# entry-point
+entry_point/target
+/entry-point/Cargo.lock
+
+# tarator
 /tarator/target
 /tarator/Cargo.lock
+
+# sandbox
 /sandbox/target
 /sandbox/Cargo.lock

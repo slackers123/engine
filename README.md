@@ -6,7 +6,7 @@ Some of the planned features can be found in the [Ideas](Ideas.md) file.
 <br><br>
 
 ## How to use
-The project currently consist of 3 cargo crates: entry_point, sandbox, tarator
+The project currently consist of 3 main cargo crates: entry_point, sandbox, tarator
 
 <br>
 
@@ -25,10 +25,4 @@ The project currently consist of 3 cargo crates: entry_point, sandbox, tarator
 
 <br><br>
 
-To build the crates, make sure your console's location is in the crate you want to build<br>
-Example (entry_point):
-    cd entry_point
-    cargo build
-<br>Switching back to tarator:
-    cd ../tarator
-    cargo build
+other crates are more or less for testing purposes
