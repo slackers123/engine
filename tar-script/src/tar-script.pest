@@ -1,0 +1,60 @@
+WHITESPACE =    _{ " " | "\t" | "\n" | "\r"}
+EOS = 			_{ ";" }
+
+Program = 		_{ SOI ~ definitions? ~ functions ~ EOI }
+
+definitions = 	  { (definition | import)+ }
+
+definition =     { "#def" ~ ident ~ "=" ~ ident ~ EOS }
+import = 	     { "#use" ~ ident ~ ("::" ~ident)* ~ EOS }
+
+functions =      { funcDef+ }
+
+funcDef = 		 { "fn" ~ ident ~ "(" ~ args? ~ ")" ~ ("->" ~ retTy)? ~ "{" ~ block ~ "}" }
+
+retTy =       { Type }
+
+block = {
+	(
+        decl
+      | funcCall
+      | valAssign
+    )*
+     ~ returnStmt?
+}
+
+returnStmt = 	 { "return" ~ Expr ~ EOS }
+
+valAssign = 	 { ident ~ "=" ~ Expr ~ EOS }
+
+decl = 	         { Type ~ ident ~ "=" ~ Expr ~ EOS }
+
+funcCall = 		 { ident ~ "(" ~ (Expr ~ ",")* ~ Expr? ~ ")" ~ EOS }
+
+Expr =           { Sum | string }
+
+Sum =            { Product ~ ((plus | minus) ~ Product)* }
+
+Product =        { Value ~ ((mul | div) ~ Value)* }
+
+Value =          _{ int | funcCall | ident | "(" ~ Expr ~ ")" }
+
+unaryOperation =_{ plus | minus }
+operation =     _{ plus | minus | div | mul }
+
+plus =  { "+" }
+minus = { "-" }
+div =   { "/" }
+mul =   { "*" }
+
+int = 			@{ ASCII_DIGIT+ }
+
+string = 		@{ "\"" ~ ( (!"\"" ~ ANY) )* ~ "\"" }
+
+args = 			 { arg ~ ("," ~ arg)* }
+
+arg = 			 { ident ~ ":" ~ Type }
+
+ident = 		@{ ASCII_ALPHA ~ (ASCII_ALPHANUMERIC | "_" | "." )* }
+
+Type = 			 { "int" | "string" }

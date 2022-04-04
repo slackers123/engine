@@ -1,0 +1,12 @@
+#def entry = main;
+#use std::log;
+
+fn main(some: int) -> int {
+    log(some/10);
+
+    return some;
+}
+
+fn wow() {
+    wow();
+}
