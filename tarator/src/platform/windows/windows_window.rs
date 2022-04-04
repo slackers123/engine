@@ -3,8 +3,15 @@
 
 use crate::tarator::window::*;
 
+use winit::{
+    event_loop::{ControlFlow, EventLoop},
+    window::{Window, WindowBuilder}
+};
+
 struct WindowsWindow {
-    data: WindowData    
+    data: WindowData,
+    event_loop: EventLoop<()>,
+    window: Window
 }
 
 struct WindowData {
@@ -28,5 +35,17 @@ impl Window for WindowsWindow {
     fn set_vsync(enabled: bool) {}
     fn get_vsync_enabled() -> bool {}
 
-    fn create(window_props: &WindowProps) -> &Self {}
+    fn create(window_props: &WindowProps) -> &Self {
+        return WindowsWindow {
+            data: WindowData {
+                title: window_props.title,
+                width: window_props.width,
+                height: window_props.height,
+                /// This below me is currently hard-coded, consider making it alter somehow
+                vsync: true
+            },
+            event_loop: EventLoop::new(),
+            window: WindowBuilder::new().build(&self.event_loop).unwrap()
+        }
+    }
 }
