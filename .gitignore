@@ -7,8 +7,10 @@
 /tar-script/Cargo.lock
 
 # entry-point
-entry_point/target
+/entry_point/target
 /entry-point/Cargo.lock
+entry_point/Cargo.lock
+
 
 # tarator
 /tarator/target
