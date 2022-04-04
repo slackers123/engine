@@ -24,6 +24,7 @@ pub enum AstNode {
         ident: String, // name of the argument
         ty: String, // type of the argument
     },
+    Ident(String),
     Integer(i32),
     Float(f32),
     String(String),

@@ -2,11 +2,7 @@
 #use std::log;
 
 fn main(some: int) -> int {
-    log(some/10);
+    log(some(10+2));
 
     return some;
-}
-
-fn wow() {
-    wow();
 }

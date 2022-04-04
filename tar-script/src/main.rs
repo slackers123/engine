@@ -58,18 +58,162 @@ fn parse_fn(func: Pair<Rule>, name: String) -> ast::AstNode {
 }
 
 fn parse_fn_block(func: Pair<Rule>) -> Vec<ast::AstNode> {
-    let block = vec![];
+    let mut block = vec![];
 
-    let mut inner = func.into_inner();
+    let inner = func.into_inner();
 
     for i in inner {
         if i.as_rule() == Rule::block {
-            println!("func: {:?}", i);
+            for j in i.into_inner() {
+                match j.as_rule() {
+                    Rule::funcCall => {
+                        block.push(parse_funcCall(j));
+                    }
+
+                    Rule::returnStmt => {
+                        // parse_ret_stmt(j);
+                    }
+                    
+                    some => {
+                        panic!("Unknown statemen: {:?}", j.as_rule());
+                    }
+                }
+            }
         }
     }
     return block;
 }
 
+fn parse_funcCall(call: Pair<Rule>) -> ast::AstNode {
+
+    let mut ident = "".to_owned();
+    let mut input = vec![];
+
+    for p in call.into_inner() {
+        match p.as_rule() {
+            Rule::ident => {
+                ident = p.as_str().to_owned();
+            }
+
+            Rule::Expr => {
+                input.push(parse_expr(p));
+            }
+
+            some => {
+                panic!("Unknown part to funcCall: {:?}", p.as_rule());
+            }
+        }
+    }
+    
+    
+    return ast::AstNode::FuncCall {
+        ident,
+        args: input,
+    }
+}
+
+fn parse_expr(expr: Pair<Rule>) -> ast::AstNode{
+
+    match expr.as_rule() {
+        Rule::Sum => {
+            return parse_sum(expr);
+        }
+        Rule::string => {
+            return ast::AstNode::String(expr.as_str().to_owned());
+        }
+        Rule::Expr => {
+            return parse_expr(expr.into_inner().next().unwrap());
+        }
+
+        some => {
+            panic!("Unknown rule in expression: {:?}", expr.as_rule())
+        }
+    }
+}
+
+fn parse_sum(sum: Pair<Rule>) -> ast::AstNode {
+    let mut inner = sum.into_inner();
+
+    if inner.clone().count() == 1 {
+        return parse_product(inner.next().unwrap());
+    }
+    else {
+        let lhs = inner.next().unwrap();
+        let op = inner.next().unwrap();
+        let rhs = inner.next().unwrap();
+        let ast_op: ast::BinOp;
+
+        match op.as_rule() {
+            Rule::plus => {
+                ast_op = ast::BinOp::Plus;
+            }
+            Rule::minus => {
+                ast_op = ast::BinOp::Minus;
+            }
+            some => {
+                panic!("invalid sum operation: {:?}", some);
+            }
+        }
+        return ast::AstNode::BinOp {
+            op: ast_op,
+            lhs: Box::new(parse_product(lhs)),
+            rhs: Box::new(parse_product(rhs)),
+        }
+    }
+}
+
+fn parse_product(prod: Pair<Rule>) -> ast::AstNode {
+    let mut inner = prod.into_inner();
+
+    if inner.clone().count() == 1 {
+        return parse_value(inner.next().unwrap());
+    }
+    else {
+        let lhs = inner.next().unwrap();
+        let op = inner.next().unwrap();
+        let rhs = inner.next().unwrap();
+        let ast_op: ast::BinOp;
+
+        match op.as_rule() {
+            Rule::div => {
+                ast_op = ast::BinOp::Div;
+            }
+            Rule::mul => {
+                ast_op = ast::BinOp::Mul;
+            }
+            some => {
+                panic!("invalid sum operation: {:?}", some);
+            }
+        }
+        return ast::AstNode::BinOp {
+            op: ast_op,
+            lhs: Box::new(parse_value(lhs)),
+            rhs: Box::new(parse_value(rhs)),
+        }
+    }
+}
+
+fn parse_value(val: Pair<Rule>) -> ast::AstNode{
+
+    match val.as_rule() {
+        Rule::ident => {
+            return ast::AstNode::Ident(val.as_str().to_owned());
+        }
+        Rule::int => {
+            return ast::AstNode::Integer(val.as_str().parse().unwrap());
+        }
+        Rule::Expr => {
+            return parse_expr(val);
+        }
+        Rule::innerFuncCall => {
+            return parse_funcCall(val);
+        }
+
+        some => {
+            panic!("Unknown value: {:?}", val.as_rule())
+        }
+    }
+}
 
 fn parse_fn_ret_ty(func: Pair<Rule>) -> Option<String> {
     let mut fn_inner = func.into_inner();

@@ -30,6 +30,7 @@ valAssign = 	 { ident ~ "=" ~ Expr ~ EOS }
 decl = 	         { Type ~ ident ~ "=" ~ Expr ~ EOS }
 
 funcCall = 		 { ident ~ "(" ~ (Expr ~ ",")* ~ Expr? ~ ")" ~ EOS }
+innerFuncCall = { ident ~ "(" ~ (Expr ~ ",")* ~ Expr? ~ ")" }
 
 Expr =           { Sum | string }
 
@@ -37,7 +38,7 @@ Sum =            { Product ~ ((plus | minus) ~ Product)* }
 
 Product =        { Value ~ ((mul | div) ~ Value)* }
 
-Value =          _{ int | funcCall | ident | "(" ~ Expr ~ ")" }
+Value =          _{ int | innerFuncCall | ident | "(" ~ Expr ~ ")" }
 
 unaryOperation =_{ plus | minus }
 operation =     _{ plus | minus | div | mul }
