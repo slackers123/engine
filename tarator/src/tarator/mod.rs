@@ -6,3 +6,4 @@ pub mod core;
 pub mod event;
 pub mod application;
 pub mod window;
+pub mod render;

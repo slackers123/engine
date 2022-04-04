@@ -8,9 +8,7 @@
 
 # entry-point
 /entry_point/target
-/entry-point/Cargo.lock
-entry_point/Cargo.lock
-
+/entry_point/Cargo.lock
 
 # tarator
 /tarator/target

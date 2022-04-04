@@ -1,41 +1,51 @@
 /// # Windows Implementation of the Window trait
 /// [TODO] make it do something I guess
 
-use crate::tarator::window::*;
+use crate::tarator::window;
 
+#[allow(unused)]
 use winit::{
     event_loop::{ControlFlow, EventLoop},
     window::{Window, WindowBuilder}
 };
 
 struct WindowsWindow {
+    #[allow(unused)]
     data: WindowData,
+    #[allow(unused)]
     event_loop: EventLoop<()>,
+    #[allow(unused)]
     window: Window
 }
 
 struct WindowData {
-    title: &'static mut str,
+    #[allow(unused)]
+    title: &'static str,
+    #[allow(unused)]
     width: u32,
+    #[allow(unused)]
     height: u32,
+    #[allow(unused)]
     vsync: bool
 }
 
 impl WindowsWindow {
-    fn Init(props: WindowProps) {  }
+    #[allow(unused)]
+    fn init(props: window::WindowProps) {  }
 }
 
-impl Window for WindowsWindow {
+impl window::Window for WindowsWindow {
     fn update() {}
     fn get_width() {}
     fn get_height() {}
 
     // Window Attributes
     fn set_event_callback() {}
+    #[allow(unused)]
     fn set_vsync(enabled: bool) {}
-    fn get_vsync_enabled() -> bool {}
+    fn get_vsync_enabled() -> bool { return true; }
 
-    fn create(window_props: &WindowProps) -> &Self {
+    fn create(&self, window_props: &window::WindowProps) -> Self {
         return WindowsWindow {
             data: WindowData {
                 title: window_props.title,
