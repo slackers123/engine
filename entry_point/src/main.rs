@@ -6,7 +6,7 @@ use sandbox::SandboxApplication;
 
 fn main() {
     TR_LOG_INIT!();
-    TR_ERROR!("Initialized Log!\n");
+    TR_INFO!("Initialized Log!\n");
 
     let application = SandboxApplication::create_application();
     application.run();

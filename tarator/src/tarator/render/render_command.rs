@@ -3,12 +3,12 @@
 
 use crate::tarator::render::render_api::RenderApi;
 
-pub struct RenderCommand<T> where T: 'static + RenderApi {
+pub struct RenderCommand<'a, T: RenderApi> {
     #[allow(unused)]
-    render_api: &'static T
+    render_api: &'a T
 }
 
-impl<T> RenderCommand<T> where T: 'static + RenderApi {
+impl<'a, T: RenderApi> RenderCommand<'a, T> {
     #[allow(unused)]
     fn init(&self) { self.render_api.init(); }
     #[allow(unused)]
