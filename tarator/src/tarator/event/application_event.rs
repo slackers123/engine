@@ -37,9 +37,9 @@ impl Default for WindowResizeEvent {
 
 impl WindowResizeEvent {
     #[allow(unused)]
-    fn get_size_x(&self) -> &u32 { return &self.size_x; }
+    fn get_size_x(&self) -> u32 { return self.size_x; }
     #[allow(unused)]
-    fn get_size_y(&self) -> &u32 { return &self.size_y; }
+    fn get_size_y(&self) -> u32 { return self.size_y; }
 }
 
 crate::INTERN_IMPLEVENT!(WindowResizeEvent);

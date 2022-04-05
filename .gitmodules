@@ -1,0 +1,6 @@
+[submodule "vendor/log"]
+	path = vendor/log
+	url = https://github.com/rust-lang/log.git
+[submodule "vendor/env_logger"]
+	path = vendor/env_logger
+	url = https://github.com/env-logger-rs/env_logger.git

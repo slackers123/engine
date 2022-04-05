@@ -38,9 +38,9 @@ impl Default for MouseMovedEvent {
 
 impl MouseMovedEvent {
     #[allow(unused)]
-    fn get_move_x(&self) -> &f32 { return &self.move_x; }
+    fn get_move_x(&self) -> f32 { return self.move_x; }
     #[allow(unused)]
-    fn get_move_y(&self) -> &f32 { return &self.move_y; }
+    fn get_move_y(&self) -> f32 { return self.move_y; }
 }
 
 crate::INTERN_IMPLEVENT!(MouseMovedEvent);
@@ -73,9 +73,9 @@ impl Default for MouseScrolledEvent {
 
 impl MouseScrolledEvent {
     #[allow(unused)]
-    fn get_offset_x(&self) -> &f32 { return &self.offset_x; }
+    fn get_offset_x(&self) -> f32 { return self.offset_x; }
     #[allow(unused)]
-    fn get_offset_y(&self) -> &f32 { return &self.offset_y; }
+    fn get_offset_y(&self) -> f32 { return self.offset_y; }
 }
 
 crate::INTERN_IMPLEVENT!(MouseScrolledEvent);
@@ -86,7 +86,7 @@ crate::INTERN_IMPLEVENT!(MouseScrolledEvent);
 /////////////////////////////////////////////////////////////////
 /// # Mouse Keys
 pub trait MouseKeyEvent {
-    fn get_key_code(&self) -> &u32;    
+    fn get_key_code(&self) -> u32;    
 }
 
 
@@ -114,7 +114,7 @@ impl Default for MouseKeyPressedEvent {
 crate::INTERN_IMPLEVENT!(MouseKeyPressedEvent);
 
 impl MouseKeyEvent for MouseKeyPressedEvent {
-    fn get_key_code(&self) -> &u32 { return &self.key_code; }
+    fn get_key_code(&self) -> u32 { return self.key_code; }
 }
 
 
@@ -143,5 +143,5 @@ impl Default for MouseKeyReleasedEvent {
 crate::INTERN_IMPLEVENT!(MouseKeyReleasedEvent);
 
 impl MouseKeyEvent for MouseKeyReleasedEvent {
-    fn get_key_code(&self) -> &u32 { return &self.key_code; }
+    fn get_key_code(&self) -> u32 { return self.key_code; }
 }

@@ -12,7 +12,7 @@ use crate::tarator::event::*;
 /////////////////////////////////////////////////////////////////
 /// # KeyEvent
 pub trait KeyEvent {
-    fn get_key_code(&self) -> &u32;
+    fn get_key_code(&self) -> u32;
 }
 
 
@@ -47,7 +47,7 @@ impl KeyPressedEvent {
 crate::INTERN_IMPLEVENT!(KeyPressedEvent);
 
 impl KeyEvent for KeyPressedEvent {
-    fn get_key_code(&self) -> &u32 { return &self.key_code; }
+    fn get_key_code(&self) -> u32 { return self.key_code; }
 }
 
 
@@ -75,7 +75,7 @@ impl Default for KeyReleasedEvent {
 crate::INTERN_IMPLEVENT!(KeyReleasedEvent);
 
 impl KeyEvent for KeyReleasedEvent {
-    fn get_key_code(&self) -> &u32 { return &self.key_code; }
+    fn get_key_code(&self) -> u32 { return self.key_code; }
 }
 
 
@@ -104,5 +104,5 @@ impl Default for KeyTypedEvent {
 crate::INTERN_IMPLEVENT!(KeyTypedEvent);
 
 impl KeyEvent for KeyTypedEvent {
-    fn get_key_code(&self) -> &u32 { return &self.key_code; }
+    fn get_key_code(&self) -> u32 { return self.key_code; }
 }

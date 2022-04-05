@@ -36,8 +36,8 @@ bitflags! {
 }
 /// # Event
 pub trait Event {
-    fn get_category(&self) -> &EventCategory;
-    fn get_type(&self) -> &EventType;
+    fn get_category(&self) -> EventCategory;
+    fn get_type(&self) -> EventType;
     #[allow(unused)]
     fn is_in_category(&self, category: EventCategory) -> bool { return matches!(self.get_category(), category); }
     fn set_handled_callback(&mut self, func: &fn()->bool);
@@ -48,8 +48,8 @@ pub trait Event {
 macro_rules! INTERN_IMPLEVENT {
     ($label:tt) => {
         impl Event for $label {
-            fn get_category(&self) -> &EventCategory { return &self.event_category; }
-            fn get_type(&self) -> &EventType { return &self.event_type; }
+            fn get_category(&self) -> EventCategory { return self.event_category; }
+            fn get_type(&self) -> EventType { return self.event_type; }
             fn set_handled_callback(&mut self, func: &fn()->bool) { self.handled = func(); }
         }
     };
@@ -67,7 +67,7 @@ struct EventDispatcher {
 impl EventDispatcher {
     #[allow(unused)]
     fn dispatch(&mut self, event_type: EventType, func: fn()->bool) -> bool {
-        if *self.event.get_type() == event_type {
+        if self.event.get_type() == event_type {
             self.event.set_handled_callback(&func);
             return true;
         }
