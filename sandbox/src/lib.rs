@@ -1,11 +1,15 @@
-#[macro_use]
 extern crate tarator;
 use tarator::tarator::application::Application;
 
-struct Sandbox {
+pub struct SandboxApplication {
 
 }
 
-impl Application for Sandbox {
-    fn create_application() -> &'static Self { return &Sandbox{}; }
+impl Application for SandboxApplication {
+    fn run(&self) {
+        loop {
+            return;
+        }
+    }
+    fn create_application() -> &'static Self { return &SandboxApplication{}; }
 }

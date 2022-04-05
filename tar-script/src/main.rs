@@ -1,3 +1,6 @@
+/// # INFO TO FUTURE SLACKERS
+/// remove my "unused" and "deadcode" tags when finishing, so you can make sure that you can still improve some stuff here and there
+
 mod ast;
 
 extern crate pest;
@@ -5,6 +8,7 @@ extern crate pest;
 extern crate pest_derive;
 extern crate core;
 
+#[allow(unused)]
 use std::any::{Any, TypeId};
 use std::fs;
 use std::collections::HashMap;
@@ -73,7 +77,7 @@ fn parse_fn_block(func: Pair<Rule>) -> Vec<ast::AstNode> {
                     Rule::returnStmt => {
                         // parse_ret_stmt(j);
                     }
-                    
+                    #[allow(unused)]
                     some => {
                         panic!("Unknown statemen: {:?}", j.as_rule());
                     }
@@ -84,6 +88,7 @@ fn parse_fn_block(func: Pair<Rule>) -> Vec<ast::AstNode> {
     return block;
 }
 
+#[allow(non_snake_case)]
 fn parse_funcCall(call: Pair<Rule>) -> ast::AstNode {
 
     let mut ident = "".to_owned();
@@ -99,6 +104,7 @@ fn parse_funcCall(call: Pair<Rule>) -> ast::AstNode {
                 input.push(parse_expr(p));
             }
 
+            #[allow(unused)]
             some => {
                 panic!("Unknown part to funcCall: {:?}", p.as_rule());
             }
@@ -125,6 +131,7 @@ fn parse_expr(expr: Pair<Rule>) -> ast::AstNode{
             return parse_expr(expr.into_inner().next().unwrap());
         }
 
+        #[allow(unused)]
         some => {
             panic!("Unknown rule in expression: {:?}", expr.as_rule())
         }
@@ -209,6 +216,7 @@ fn parse_value(val: Pair<Rule>) -> ast::AstNode{
             return parse_funcCall(val);
         }
 
+        #[allow(unused)]
         some => {
             panic!("Unknown value: {:?}", val.as_rule())
         }
@@ -216,6 +224,7 @@ fn parse_value(val: Pair<Rule>) -> ast::AstNode{
 }
 
 fn parse_fn_ret_ty(func: Pair<Rule>) -> Option<String> {
+    #[allow(unused_mut)]
     let mut fn_inner = func.into_inner();
     for inner in fn_inner {
         if inner.as_rule() == Rule::retTy {
@@ -232,6 +241,7 @@ fn parse_fn_args(func: Pair<Rule>) -> Option<Vec<ast::AstNode>> {
     let mut fun = func.into_inner();
     fun.next();
 
+    #[allow(unused_mut)]
     let mut fun_inner = fun.next().unwrap().into_inner();
 
     if fun_inner.clone().next().unwrap().as_rule() != Rule::arg {
@@ -297,6 +307,7 @@ fn evaluate_definition(pair: Pair<Rule>) -> ast::AstNode {
 fn main() {
     let program = fs::read_to_string("./src/main.tar").unwrap();
 
+    #[allow(unused_mut)]
     let mut pairs: Pairs<Rule> = TarParser::parse(Rule::Program, program.as_str()).unwrap();
 
     parse_to_ast(pairs);

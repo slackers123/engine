@@ -26,6 +26,7 @@ pub enum AstNode {
     },
     Ident(String),
     Integer(i32),
+    #[allow(dead_code)]
     Float(f32),
     String(String),
     BinOp { // binary operation (operation with two arguments)
@@ -33,12 +34,15 @@ pub enum AstNode {
         lhs: Box<AstNode>, // left side of operation
         rhs: Box<AstNode>, // right side of operation
     },
+    #[allow(dead_code)]
     ReturnStmt(Box<AstNode>), // Value is the expression to be evaluated for returning
+    #[allow(dead_code)]
     Declaration { // A variable declaration e.g. int a = 10;
         ty: String,
         ident: String,
         val: Box<AstNode>,
     },
+    #[allow(dead_code)]
     ValAssign { // a value assignment to a variable e.g. a = 20;
         ident: String,
         val: Box<AstNode>
@@ -47,5 +51,6 @@ pub enum AstNode {
         ident: String, // name of the function to be called
         args: Vec<AstNode>, // array of arguments given to the function (optional)
     },
+    #[allow(dead_code)]
     Expr(Box<AstNode>), // Can either be a calculation or a string
 }

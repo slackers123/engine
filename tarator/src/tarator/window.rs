@@ -2,11 +2,11 @@
 /// Provides the Window Trait Implementation with Window Information
 pub struct WindowProps {
     #[allow(unused)]
-    title: &'static str,
+    pub title: &'static str,
     #[allow(unused)]
-    width: u32,
+    pub width: u32,
     #[allow(unused)]
-    height: u32
+    pub height: u32
 }
 
 impl Default for WindowProps {
@@ -31,5 +31,5 @@ pub trait Window {
     fn set_vsync(enabled: bool);
     fn get_vsync_enabled() -> bool;
 
-    fn create(window_props: &WindowProps) -> &Self;
+    fn create(&self, window_props: &WindowProps) -> Self;
 }
