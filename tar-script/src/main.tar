@@ -1,9 +1,9 @@
 #def entry = main;
 #use std::log;
 
-fn main(arg: int) -> int {
+fn main(arg: int) {
     int a = 10;
     a = 3;
 
-    return arg;
+    log(b);
 }

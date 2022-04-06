@@ -3,7 +3,7 @@ use std::collections::HashMap;
 
 use crate::Rule;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum BinOp {// types of binary operation
     Plus,
     Minus,
@@ -11,7 +11,7 @@ pub enum BinOp {// types of binary operation
     Div,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum AstNode {
     Definitions(Vec<AstNode>), // The value is the array of type Definition or Import
     Definition{
@@ -31,7 +31,7 @@ pub enum AstNode {
     },
     Ident(String),
     Integer(i32),
-    Float(f32),
+    // Float(f32),
     String(String),
     BinOp { // binary operation (operation with two arguments)
         op: BinOp, // type of operation
@@ -52,8 +52,7 @@ pub enum AstNode {
         ident: String, // name of the function to be called
         args: Vec<AstNode>, // array of arguments given to the function (optional)
     },
-    #[allow(dead_code)]
-    Expr(Box<AstNode>), // Can either be a calculation or a string
+    // Expr(Box<AstNode>), // Can either be a calculation or a string
 }
 
 
@@ -65,15 +64,19 @@ pub fn parse_to_ast(parsed: Pairs<Rule>) -> (Vec<AstNode>, HashMap<String, AstNo
 
     for pair in parsed {
         match pair.as_rule() {
-            Rule::definitions => {
-                defs.push(evaluate_definition(pair));
+            Rule::definition => {
+                defs.push(parse_def(pair));
+            }
+            Rule::import =>{
+                defs.push(parse_import(pair));
             }
             Rule::functions => {
                 for func in pair.into_inner() {
                     let name = get_ident(func.clone());
                     let fun = parse_fn(func, name.clone());
 
-                    funcs.insert(name, fun);
+                    let test = funcs.insert(name.clone(), fun);
+                    if !test.is_none() {panic!("The function {} already exists", name)};
                 }
             }
 
@@ -82,8 +85,6 @@ pub fn parse_to_ast(parsed: Pairs<Rule>) -> (Vec<AstNode>, HashMap<String, AstNo
             some => panic!("invalid top level input to ast parser: {:?}", some)
         }
     }
-
-    println!("{:?}", funcs);
 
     return (defs, funcs);
 }
@@ -170,9 +171,7 @@ fn parse_func_call(call: Pair<Rule>) -> AstNode {
             Rule::Expr => {
                 input.push(parse_expr(p));
             }
-
-            #[allow(unused)]
-            some => {
+            _ => {
                 panic!("Unknown part to funcCall: {:?}", p.as_rule());
             }
         }
@@ -198,8 +197,7 @@ fn parse_expr(expr: Pair<Rule>) -> AstNode{
             return parse_expr(expr.into_inner().next().unwrap());
         }
 
-        #[allow(unused)]
-        some => {
+        _ => {
             panic!("Unknown rule in expression: {:?}", expr.as_rule())
         }
     }
@@ -283,16 +281,14 @@ fn parse_value(val: Pair<Rule>) -> AstNode{
             return parse_func_call(val);
         }
 
-        #[allow(unused)]
-        some => {
+        _ => {
             panic!("Unknown value: {:?}", val.as_rule())
         }
     }
 }
 
 fn parse_fn_ret_ty(func: Pair<Rule>) -> Option<String> {
-    #[allow(unused_mut)]
-    let mut fn_inner = func.into_inner();
+    let fn_inner = func.into_inner();
     for inner in fn_inner {
         if inner.as_rule() == Rule::retTy {
             return Some(inner.as_str().to_owned())
@@ -337,35 +333,21 @@ fn get_ident(func: Pair<Rule>) -> String {
     return func.into_inner().next().unwrap().as_str().to_owned();
 }
 
-fn evaluate_definition(pair: Pair<Rule>) -> AstNode {
-    let mut def_nodes = vec![];
+fn parse_import(pair: Pair<Rule>) -> AstNode {
+    let mut imports = vec![];
 
-    for p in pair.into_inner() {
-        match p.as_rule() {
-            Rule::definition => {
-                let mut v = vec![];
-                for t_v in p.into_inner() {
-                    v.push(t_v.as_str().to_owned())
-                }
-                def_nodes.push(AstNode::Definition{ target: v.pop().unwrap(), value: v.pop().unwrap()});
-                if v.len() > 0 {
-                    panic!("to many entries in definition vector");
-                }
-            }
-            Rule::import => {
-                let mut idents = vec![];
-                for strs in p.into_inner() {
-                    idents.push(strs.as_str().to_owned());
-                }
-                def_nodes.push(AstNode::Import(idents));
-            }
-            _ =>  {
-                panic!("Unexpected input for definitions: {:?}", p);
-            }
-        }
+    for i in pair.into_inner() {
+        imports.push(i.as_str().to_owned());
     }
 
-    let defs = AstNode::Definitions(def_nodes);
+    return AstNode::Import(imports);
+}
 
-    return defs;
+fn parse_def(pair: Pair<Rule>) -> AstNode {
+    let mut inner = pair.into_inner();
+
+    return AstNode::Definition {
+        target: inner.next().unwrap().as_str().to_owned(),
+        value: inner.next().unwrap().as_str().to_owned(),
+    }
 }

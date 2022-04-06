@@ -3,7 +3,7 @@ EOS = 			_{ ";" }
 
 Program = 		_{ SOI ~ definitions? ~ functions ~ EOI }
 
-definitions = 	  { (definition | import)+ }
+definitions = 	  _{ (definition | import)+ }
 
 definition =     { "#def" ~ ident ~ "=" ~ ident ~ EOS }
 import = 	     { "#use" ~ ident ~ ("::" ~ident)* ~ EOS }

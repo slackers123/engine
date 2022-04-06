@@ -9,7 +9,7 @@ edition = "2021"
 winit = "0.26"
 cgmath = "0.18"
 log = { path = "../../vendor/log" }
-env_logger = { path = "../vendor/env_logger" }
+env_logger = { path = "../../vendor/env_logger" }
 wgpu = "0.12"
 pollster = "0.2"
 image = "*"
