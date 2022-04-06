@@ -1,11 +1,11 @@
 #[allow(unused)]
 #[macro_use]
 extern crate tarator;
-use tarator::{tarator::{application::Application, window::{WindowProps, Window}}};
+use tarator::{tarator::{application::Application, window::{WindowProps, Window}, core::UPtr}};
 
 pub struct SandboxApplication<TWindow> where
     TWindow: Window {
-    window: Box<TWindow>
+    window: UPtr<TWindow>
 }
 
 impl<TWindow> Application<TWindow> for SandboxApplication<TWindow> where
@@ -13,7 +13,7 @@ impl<TWindow> Application<TWindow> for SandboxApplication<TWindow> where
 {
     fn new(window_props: &WindowProps) -> Self {
         return SandboxApplication{
-            window: Box::new(TWindow::new(window_props))
+            window: UPtr::new(TWindow::new(window_props))
         };
     }
     fn run(&self) {

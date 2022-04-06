@@ -31,6 +31,7 @@ pub enum AstNode {
     },
     Ident(String),
     Integer(i32),
+    #[allow(unused)]
     Float(f32),
     String(String),
     BinOp { // binary operation (operation with two arguments)
