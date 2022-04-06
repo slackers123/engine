@@ -1,16 +1,24 @@
+#[allow(unused)]
+#[macro_use]
 extern crate tarator;
-use tarator::{tarator::application::Application, TR_DEBUG};
+use tarator::{tarator::{application::Application, window::{WindowProps, Window}}};
 
-pub struct SandboxApplication {
-
+pub struct SandboxApplication<TWindow> where
+    TWindow: Window {
+    window: Box<TWindow>
 }
 
-impl Application for SandboxApplication {
+impl<TWindow> Application<TWindow> for SandboxApplication<TWindow> where
+    TWindow: Window 
+{
+    fn new(window_props: &WindowProps) -> Self {
+        return SandboxApplication{
+            window: Box::new(TWindow::new(window_props))
+        };
+    }
     fn run(&self) {
         loop {
-            TR_DEBUG!("Exiting...");
-            return; 
+            self.window.update();
         }
     }
-    fn create_application() -> &'static Self { return &SandboxApplication{}; }
 }

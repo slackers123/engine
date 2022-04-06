@@ -1,5 +1,8 @@
 /// # WindowProps
 /// Provides the Window Trait Implementation with Window Information
+/// Implemented in platform/*
+
+/// ## WindowProps
 pub struct WindowProps {
     #[allow(unused)]
     pub title: &'static str,
@@ -19,17 +22,17 @@ impl Default for WindowProps {
     }
 }
 
-/// # Window
-/// Implemented in "platform"
+/// ## Window
+/// Implemented in platform/*
 pub trait Window {
-    fn update();
-    fn get_width();
-    fn get_height();
+    fn update(&self);
+    fn get_width(&self);
+    fn get_height(&self);
 
     // Window Attributes
-    fn set_event_callback();
-    fn set_vsync(enabled: bool);
-    fn get_vsync_enabled() -> bool;
+    fn set_event_callback(&self);
+    fn set_vsync(&self, enabled: bool);
+    fn get_vsync_enabled(&self) -> bool;
 
-    fn create(&self, window_props: &WindowProps) -> Self;
+    fn new(window_props: &WindowProps) -> Self;
 }
