@@ -17,6 +17,3 @@
 # sandbox
 /sandbox/target
 /sandbox/Cargo.lock
-
-# submodules
-vendor/*
