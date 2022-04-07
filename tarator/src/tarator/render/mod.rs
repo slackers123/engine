@@ -3,6 +3,7 @@
 
 pub mod render_api;
 pub mod render_command;
+pub mod buffer;
 
 
 /// # GraphicsContext

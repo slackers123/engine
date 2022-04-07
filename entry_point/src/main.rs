@@ -14,7 +14,8 @@ fn main() {
     TR_LOG_INIT!();
     TR_INFO!("Initialized Log!\n");
 
-    let window_props: WindowProps = WindowProps { title: "Tarator Engine", width: 1280, height: 720 };
-    let application: SandboxApplication<WinitWindow> = SandboxApplication::new(&window_props);
+    let application: SandboxApplication<WinitWindow> = SandboxApplication::new(
+        &WindowProps { title: "Tarator Engine", width: 1280, height: 720 }
+    );
     application.run();
 }

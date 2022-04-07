@@ -1,10 +1,8 @@
-/// # WGPU Implementation of window trait
-/// tarator/window.rs
-
 use crate::tarator::window::{WindowProps, Window};
-
 use winit::event_loop::EventLoop;
 
+/// ## WGPU Implementation of window trait
+/// tarator/window.rs
 pub struct WinitWindow {
     #[allow(unused)]
     event_loop: EventLoop<()>,
