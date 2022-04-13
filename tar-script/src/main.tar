@@ -1,9 +1,10 @@
 #def entry = main;
 #use std::log;
 
-fn main(arg: int) {
-    int a = 10;
-    a = 3;
+fn main() {
+    log(pow(10));
+}
 
-    log(b);
+fn pow(a: int) -> int {
+    return a*a;
 }

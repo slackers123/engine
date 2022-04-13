@@ -3,6 +3,7 @@ use std::collections::HashMap;
 
 use crate::Rule;
 
+
 #[derive(Debug, Clone)]
 pub enum BinOp {// types of binary operation
     Plus,
