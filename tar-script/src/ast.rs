@@ -5,11 +5,21 @@ use crate::Rule;
 
 
 #[derive(Debug, Clone)]
-pub enum BinOp {// types of binary operation
+pub enum BinOp {// types of binary operations
     Plus,
     Minus,
     Mul,
     Div,
+}
+
+#[derive(Debug, Clone)]
+pub enum BoolOp {// types of boolean operations
+    Equal,
+    NotEqual,
+    GreaterThan,
+    LessThan,
+    GreaterThanEqual,
+    LessThanEqual,
 }
 
 #[derive(Debug, Clone)]
@@ -32,12 +42,28 @@ pub enum AstNode {
     },
     Ident(String),
     Integer(i32),
+    Bool(bool),
     // Float(f32),
     String(String),
     BinOp { // binary operation (operation with two arguments)
         op: BinOp, // type of operation
         lhs: Box<AstNode>, // left side of operation
         rhs: Box<AstNode>, // right side of operation
+    },
+    BoolOp { // operation resulting in a boolean
+        op: BoolOp,
+        lhs: Box<AstNode>, // left side of operation
+        rhs: Box<AstNode>, // right side of operation
+    },
+    IfStmt{
+        condition: Box<AstNode>,
+        block: Vec<AstNode>,
+        else_if_stmt: Option<Vec<AstNode>>, // optional vector of ElseIf statements
+        else_stmt: Option<Vec<AstNode>>, // optional additional block (block = Vec of AstNodes)
+    },
+    ElseIf {
+        condition: Box<AstNode>,
+        block: Vec<AstNode>,
     },
     ReturnStmt(Box<AstNode>), // Value is the expression to be evaluated for returning
     Declaration { // A variable declaration e.g. int a = 10;
@@ -91,12 +117,34 @@ pub fn parse_to_ast(parsed: Pairs<Rule>) -> (Vec<AstNode>, HashMap<String, AstNo
 }
 
 fn parse_fn(func: Pair<Rule>, name: String) -> AstNode {
+    let inner = func.into_inner();
+
+    let ident = name;
+    let mut args: Option<Vec<AstNode>> = None;
+    let mut ret_ty: Option<String> = None;
+    let mut block: Vec<AstNode> = vec![];
+
+    for i in inner {
+        match i.as_rule() {
+            Rule::ident => {}
+            Rule::args => {
+                args = parse_fn_args(i);
+            }
+            Rule::retTy => {
+                ret_ty = parse_fn_ret_ty(i);
+            }
+            Rule::block => {
+                block = parse_fn_block(i);
+            }
+            _ => {panic!()}
+        }
+    }
 
     return AstNode::FuncDef {
-        ident: name,
-        args: parse_fn_args(func.clone()),
-        ret_ty: parse_fn_ret_ty(func.clone()),
-        block: parse_fn_block(func),
+        ident,
+        args,
+        ret_ty,
+        block,
     };
 }
 
@@ -105,31 +153,139 @@ fn parse_fn_block(func: Pair<Rule>) -> Vec<AstNode> {
 
     let inner = func.into_inner();
 
-    for i in inner {
-        if i.as_rule() == Rule::block {
-            for j in i.into_inner() {
-                match j.as_rule() {
-                    Rule::funcCall => {
-                        block.push(parse_func_call(j));
-                    }
+    for j in inner {
+        match j.as_rule() {
+            Rule::funcCall => {
+                block.push(parse_func_call(j));
+            }
 
-                    Rule::returnStmt => {
-                        block.push(parse_ret_stmt(j));
-                    }
-                    Rule::decl => {
-                        block.push(parse_decl(j));
-                    }
-                    Rule::valAssign => {
-                        block.push(parse_val_assign(j));
-                    }
-                    _ => {
-                        panic!("Unknown statemen: {:?}", j.as_rule());
-                    }
-                }
+            Rule::returnStmt => {
+                block.push(parse_ret_stmt(j));
+            }
+            Rule::decl => {
+                block.push(parse_decl(j));
+            }
+            Rule::valAssign => {
+                block.push(parse_val_assign(j));
+            }
+
+            Rule::ifStmt => {
+                block.push(parse_if_stmt(j));
+            }
+            _ => {
+                panic!("Unknown statemen: {:?}", j.as_rule());
             }
         }
     }
     return block;
+}
+
+fn parse_if_stmt(stmt: Pair<Rule>) -> AstNode {
+    let mut inner = stmt.into_inner();
+    let condition = Box::new(parse_condition(inner.next().unwrap()));
+    let block = parse_fn_block(inner.next().unwrap());
+
+    let mut else_if: Vec<AstNode> = vec![];
+
+    let mut else_stmt: Option<Vec<AstNode>> = None;
+
+    let mut cond: Option<Pair<Rule>> = None;
+    for els in inner {
+        match els.as_rule() {
+            Rule::condition => {
+                cond = Some(els);
+            }
+            Rule::block => {
+                if cond.is_some() {
+                    println!("{}", els);
+                    else_if.push(AstNode::ElseIf{
+                        condition: Box::new(parse_condition(cond.clone().unwrap())),
+                        block: parse_fn_block(els),
+                    });
+                    cond = None;
+                }
+                else {
+                    else_stmt = Some(parse_fn_block(els));
+                }
+            }
+            _ => {panic!("idk")}
+        }
+    }
+    
+    return AstNode::IfStmt {
+        condition,
+        block,
+        else_if_stmt: Some(else_if),
+        else_stmt,
+    };
+}
+
+fn parse_condition(cond: Pair<Rule>) -> AstNode {
+    let mut inner = cond.into_inner();
+    let next = inner.next().unwrap();
+
+    match next.as_rule() {
+        Rule::boolExpr => {
+            return parse_bool_expr(next);
+        }
+        Rule::bool => {
+            return parse_bool(next);
+        }
+        Rule::innerFuncCall => {
+            return parse_func_call(next);
+        }
+        _=> panic!("unknown")
+    }
+    todo!();
+}
+
+fn parse_bool_expr(expr: Pair<Rule>) -> AstNode {
+    let mut inner = expr.into_inner();
+
+    let op: BoolOp;
+
+    let lhs = parse_expr(inner.next().unwrap());
+
+    match inner.next().unwrap().as_rule() {
+        Rule::equal => {
+            op = BoolOp::Equal;
+        }
+        Rule::notEqual => {
+            op = BoolOp::NotEqual;
+        }
+        Rule::greaterThan => {
+            op = BoolOp::GreaterThan;
+        }
+        Rule::lessThan => {
+            op = BoolOp::LessThan;
+        }
+        Rule::greaterThanEqual => {
+            op = BoolOp::GreaterThanEqual;
+        }
+        Rule::lessThanEqual => {
+            op = BoolOp::LessThanEqual;
+        }
+
+        some => {panic!("unexpected boolean operation '{:?}'", some)}
+    }
+
+    let rhs = parse_expr(inner.next().unwrap());
+
+    return AstNode::BoolOp {
+        op,
+        lhs: Box::new(lhs),
+        rhs: Box::new(rhs),
+    }
+}
+
+fn parse_bool(val: Pair<Rule>) -> AstNode {
+    if val.as_str() == "true" {
+        return AstNode::Bool(true);
+    }
+    else if val.as_str() != "false" {
+        panic!("wrong input to bool!");
+    }
+    return AstNode::Bool(false);
 }
 
 fn parse_val_assign(val_assign: Pair<Rule>) -> AstNode {
@@ -192,7 +348,9 @@ fn parse_expr(expr: Pair<Rule>) -> AstNode{
             return parse_sum(expr);
         }
         Rule::string => {
-            return AstNode::String(expr.as_str().to_owned());
+            let str = expr.as_str();
+            let str = &str[1..str.len() - 1];
+            return AstNode::String(str.to_owned());
         }
         Rule::Expr => {
             return parse_expr(expr.into_inner().next().unwrap());
@@ -289,30 +447,15 @@ fn parse_value(val: Pair<Rule>) -> AstNode{
 }
 
 fn parse_fn_ret_ty(func: Pair<Rule>) -> Option<String> {
-    let fn_inner = func.into_inner();
-    for inner in fn_inner {
-        if inner.as_rule() == Rule::retTy {
-            return Some(inner.as_str().to_owned())
-        }
-    }
-
-    return None;
+    return Some(func.as_str().to_owned());
 }
 
 fn parse_fn_args(func: Pair<Rule>) -> Option<Vec<AstNode>> {
     let mut args = vec![];
 
-    let mut fun = func.into_inner();
-    fun.next();
+    let mut inner = func.into_inner();
 
-    #[allow(unused_mut)]
-    let mut fun_inner = fun.next().unwrap().into_inner();
-
-    if fun_inner.clone().next().unwrap().as_rule() != Rule::arg {
-        return None;
-    }
-
-    for arg in fun_inner {
+    for arg in inner {
         args.push(AstNode::Arg{
             ident: get_ident(arg.clone()),
             ty: get_ty(arg),
