@@ -1,8 +1,9 @@
 use crate::tarator::{
-    window::{WindowProps, Window},
+    window::{WindowProps, Window, self},
     event::{
         Event,
-        application_event::*
+        application_event::*,
+        key_event::*
     },
     core::{UPtr, SPtr}
 };
@@ -40,12 +41,25 @@ impl/*<'a>*/ Window for WinitWindow/*<'a>*/ {
             *control_flow = ControlFlow::Poll;
             match event {
                 winit::event::Event::WindowEvent {
-                    event: winit::event::WindowEvent::CloseRequested,
-                    ..
-                } => {
-                    TR_INFO!("Closing WinitWindow\n");
-                    *control_flow = ControlFlow::Exit;
-                    return_event = SPtr::new(WindowCloseEvent::default());
+                    ref event,
+                    window_id,
+                } if window_id == self.window.id() => {
+                        match event {
+                            winit::event::WindowEvent::CloseRequested => {
+                                *control_flow = ControlFlow::Exit;
+                                return_event = SPtr::new(WindowCloseEvent::default());
+                            },
+                            winit::event::WindowEvent::KeyboardInput {
+                                input: winit::event::KeyboardInput {
+                                    state: winit::event::ElementState::Pressed,
+                                    ..
+                                },
+                                ..
+                            } => {
+                                return_event = SPtr::new(KeyPressedEvent::default());
+                            },
+                            _ => {}
+                        }
                 },
                 _ => ()
             };

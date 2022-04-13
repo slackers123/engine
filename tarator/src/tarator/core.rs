@@ -33,3 +33,7 @@ pub type UPtr<T> = std::boxed::Box<T>;
 /// Currently only an alias for and Rc<T>, -''-
 #[allow(unused)]
 pub type SPtr<T> = std::rc::Rc<T>;
+/// ## Vector
+/// Vector<br>
+/// Currently only an alias for Vec<T>, -''-
+pub type Vector<T> = Vec<T>;

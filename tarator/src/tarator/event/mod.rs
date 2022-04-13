@@ -55,22 +55,3 @@ macro_rules! INTERN_EVENT_IMPLEMENT {
         }
     };
 }
-/// ## EventDispatcher
-/// Dispatches Events to their functions
-/// [HINT TO MYSELF] POSSIBLE BRAIN-BUG SOMEWHERE!
-#[allow(unused)]
-struct EventDispatcher<'a, TEvent> where
-    TEvent: Event {
-    event: &'a mut TEvent
-}
-impl<'a, TEvent> EventDispatcher<'a, TEvent> where
-    TEvent: Event {
-    #[allow(unused)]
-    fn dispatch(&mut self, event_type: EventAction, func: fn()->bool) -> bool {
-        if self.event.get_action() == event_type {
-            self.event.set_handled_callback(&func);
-            return true;
-        }
-        return false;
-    }
-}

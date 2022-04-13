@@ -1,11 +1,11 @@
 //! # Log
 //! Collection of macros for debugging purposes
 /// ## TR_LOG_INIT
-/// Has to be called before calling any of the other macros!
+/// Has to be called before calling any of the other logging macros!
 #[macro_export]
 macro_rules! TR_LOG_INIT {
     () => {
-       env_logger::init(); 
+       env_logger::Builder::new().target(env_logger::Target::Stderr).init(); 
     };
 }
 /// ## TR_ERROR
