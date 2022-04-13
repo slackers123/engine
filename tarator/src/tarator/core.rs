@@ -22,7 +22,7 @@ macro_rules! BIT {
     };
 }
 /// # Smart Pointers
-/// Currently only implemented by std, but considering to write into own memory manager
+/// Currently only implemented using std, but considering to write into own memory manager
 /// ## UPtr
 /// Unique Pointer<br>
 /// Currently only an alias for and Box<T>, -''-

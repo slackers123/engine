@@ -7,5 +7,5 @@ use crate::tarator::window::{WindowProps, Window};
 pub trait Application<TWindow> where
     TWindow: Window{
     fn new(window_props: &WindowProps) -> Self;
-    fn run(&self);
+    fn run(&mut self);
 }

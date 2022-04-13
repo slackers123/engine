@@ -14,8 +14,10 @@ fn main() {
     TR_LOG_INIT!();
     TR_INFO!("Initialized Log!\n");
 
-    let application: SandboxApplication<WinitWindow> = SandboxApplication::new(
-        &WindowProps { title: "Tarator Engine", width: 1280, height: 720 }
+    //  Currently To Change Window API you have to Replace Te Generic Type Here:
+    //                                     \\         //
+    let mut application: SandboxApplication<WinitWindow> = SandboxApplication::new(
+        &WindowProps { title: String::from("Tarator Engine"), width: 1280, height: 720 }
     );
     application.run();
 }

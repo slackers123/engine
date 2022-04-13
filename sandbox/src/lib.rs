@@ -1,7 +1,12 @@
 #[allow(unused)]
 #[macro_use]
 extern crate tarator;
-use tarator::{tarator::{application::Application, window::{WindowProps, Window}, core::UPtr}};
+use tarator::{tarator::{
+    application::Application,
+    window::{WindowProps, Window},
+    core::UPtr,
+    event::*
+}};
 
 pub struct SandboxApplication<TWindow> where
     TWindow: Window {
@@ -16,9 +21,13 @@ impl<TWindow> Application<TWindow> for SandboxApplication<TWindow> where
             window: UPtr::new(TWindow::new(window_props))
         };
     }
-    fn run(&self) {
+    fn run(&mut self) {
         loop {
-            self.window.update();
+            let event = self.window.update();
+
+            if event.get_action() == EventAction::WINDOWCLOSE {
+                break;
+            }
         }
     }
 }
