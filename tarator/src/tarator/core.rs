@@ -22,7 +22,7 @@ macro_rules! BIT {
     };
 }
 /// # Smart Pointers
-/// Currently only implemented by std, but considering to write into own memory manager
+/// Currently only implemented using std, but considering to write into own memory manager
 /// ## UPtr
 /// Unique Pointer<br>
 /// Currently only an alias for and Box<T>, -''-
@@ -33,3 +33,7 @@ pub type UPtr<T> = std::boxed::Box<T>;
 /// Currently only an alias for and Rc<T>, -''-
 #[allow(unused)]
 pub type SPtr<T> = std::rc::Rc<T>;
+/// ## Vector
+/// Vector<br>
+/// Currently only an alias for Vec<T>, -''-
+pub type Vector<T> = Vec<T>;

@@ -1,12 +1,12 @@
 [package]
-name = "entry_point"
+name = "tarator_engine"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-log = { path = "../vendor/log" }
+log = { path = "../vendor/log"}
 env_logger = { path = "../vendor/env_logger" }
 chrono = "0.4"
 
