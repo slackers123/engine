@@ -24,7 +24,7 @@ pub struct KeyPressedEvent {
     #[allow(unused)]
     repeat_count: u32,
     #[allow(unused)]
-    handled: bool
+   handled: bool
 }
 impl Default for KeyPressedEvent {
     fn default() -> KeyPressedEvent {
@@ -34,10 +34,20 @@ impl Default for KeyPressedEvent {
             key_code: 0,
             repeat_count: 0,
             handled: false
-        }
+        };
     }
 }
 impl KeyPressedEvent {
+    #[allow(unused)]
+    pub fn new(keycode: u32) -> KeyPressedEvent {
+        return KeyPressedEvent {
+            event_category: EventCategory::KEYBOARD | EventCategory::INPUT,
+            event_type: EventAction::KEYPRESSED,
+            key_code: keycode,
+            repeat_count: 0,
+            handled: false
+        };
+    }
     #[allow(unused)]
     fn get_repeat_count(&self) -> u32 { return self.repeat_count; }
 }
@@ -63,6 +73,17 @@ impl Default for KeyReleasedEvent {
             key_code: 0,
             handled: false
         }
+    }
+}
+impl KeyReleasedEvent {
+    #[allow(unused)]
+    pub fn new(keycode: u32) -> KeyReleasedEvent {
+        return KeyReleasedEvent {
+            event_category: EventCategory::KEYBOARD | EventCategory::INPUT,
+            event_type: EventAction::KEYRELEASED,
+            key_code: keycode,
+            handled: false
+        };
     }
 }
 impl KeyEvent for KeyReleasedEvent {

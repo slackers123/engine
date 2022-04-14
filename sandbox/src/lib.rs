@@ -21,6 +21,11 @@ impl Layer for ExampleLayer {
     fn get_name(&self) -> String {
         return self.name.clone();
     }
+    fn event(&self, event: &dyn Event) {
+        if event.get_action() == EventAction::KEYPRESSED {
+            TR_TRACE!("KeyPressedEvent\n");
+        }
+    }
 }
 
 APPLICATION_DECLARE!(SandboxApplication);
