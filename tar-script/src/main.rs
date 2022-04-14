@@ -337,9 +337,121 @@ fn main() {
     let pairs: Pairs<Rule> = TarParser::parse(Rule::Program, program.as_str()).unwrap();
 
     let (defs, funcs) = ast::parse_to_ast(pairs);
+    println!("{:?}", funcs);
 
+    fs::write("C:/Users/wowwi/rust/engine/tar-script/tar.lock", format!("{:?}", funcs)).unwrap();
+
+    let nw_funcs = read_funcs("C:/Users/wowwi/rust/engine/tar-script/tar.lock");
 
     interpret(defs, funcs);
 }
 
-// TODO:  interpretation
+fn read_funcs(path: &str) {
+    let f = fs::read(path).unwrap();
+
+    let mut file = vec![];
+
+    for c in f {
+        file.push(c as char);
+    }
+
+    let funcs: HashMap<String, ast::AstNode> = HashMap::new();
+
+    let mut i = 0;
+    while i < file.len() {
+        i+=1;
+        let name = read_string(&file, i);
+        i+= 21 + name.len();
+        if name != read_string(&file, i) {panic!("mismatched names")};
+        i+= 10 + name.len();
+        let (args, idx) = read_option_args(&file, i);
+        if idx == i { i += 14;};
+        let (ret_ty, idx) = read_option_ret_ty(&file, i);
+        if idx == i { i += 4;};
+        i+= 9;
+        let (block, idx) = read_block(&file, i);
+        break;
+        i+=1;
+    }
+}
+
+fn read_block(file: &Vec<char>, index: usize) -> (Vec<ast::AstNode>, usize) {
+    let mut i = index+1;
+
+    let (name, idx) = read_name(file, i);
+    if i == idx {panic!()};
+    i = idx;
+    let mut stmts = vec![];
+
+    if name == "FuncCall" {
+        stmts.push(read_func_call(file, i));
+    }
+    else {panic!("unknown block part: {}", name)}
+
+    return (stmts, i);
+}
+
+fn read_func_call(file: &Vec<char>, index: usize) -> ast::AstNode {
+
+}
+
+fn read_name(file: &Vec<char>, index: usize) -> (String, usize) {
+    let mut f = vec![];
+    let mut i = index;
+    while file[i] != ' ' {
+        f.push(file[i]);
+        i+=1;
+    }
+
+    return (f.iter().cloned().collect::<String>(), i);
+}
+
+fn read_option_ret_ty(file: &Vec<char>, index: usize) -> (Option<String>, usize) {
+
+    if file[index] == 'N' {return (None, index)};
+
+    let mut i = index+5;
+
+    let ty = read_string(file, i);
+    i+= ty.len()+3;
+
+    return (Some(ty), i);
+}
+
+fn read_option_args(file: &Vec<char>, index: usize) -> (Option<Vec<ast::AstNode>>, usize) {
+
+    if file[index] == 'N' {return (None, index)};
+
+    let mut args = vec![];
+
+    let mut i = index+4;
+
+    while file[i] != ']' {
+        i+= 15;
+        let ident = read_string(file, i);
+        i+= 8 + ident.len();
+        let ty = read_string(file, i);
+        i+=4 + ty.len();
+        
+        args.push(ast::AstNode::Arg {
+            ident,
+            ty,
+        });
+    }
+
+    return (Some(args), i);
+}
+
+fn read_string(file: &Vec<char>, index: usize) -> String {
+    let mut f = vec![];
+    if file[index] == '"' {
+        let mut i = index+1;
+        while file[i] != '"' {
+            f.push(file[i]);
+            i+=1;
+        }
+    }
+    else {panic!("missing \" in name")}
+
+    return f.iter().cloned().collect::<String>();
+}
