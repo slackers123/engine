@@ -17,7 +17,7 @@ use pest::iterators::Pairs;
 pub struct TarParser;
 
 fn log<I: Display>(inp: I) {
-    println!("Log: '{}'", inp);
+    println!("{}", inp);
 }
 
 fn error<I: Display>(inp: I, call_stack: &Vec<String>) {
@@ -28,6 +28,8 @@ fn error<I: Display>(inp: I, call_stack: &Vec<String>) {
 
 
 pub fn interpret(defs: Vec<ast::AstNode>, funcs: HashMap<String, ast::AstNode>) {
+    // todos (display in console)
+
     let mut entry = String::new();
     if defs.len() > 0 {
         for d_i in defs {
@@ -106,36 +108,135 @@ fn run_fn(name: String, funcs: &HashMap<String, ast::AstNode>, call_stack: &mut 
             }
         }
 
-        for item in block {
-            match item.clone() {
-                ast::AstNode::Declaration {ty, ident, val} => {
-                    let v = get_val_checked(val, ty.clone(), funcs, call_stack, &vars);
-                    vars.insert(ident, (ty, v));
-                }
+        return run_block(block, &mut vars, funcs, call_stack, ret_ty);
+    }
+    return None;
+}
 
-                ast::AstNode::ValAssign {ident, val} => {
-                    let (ty, _) = vars.get(&ident).unwrap();
-                    let v = get_val_checked(val, ty.clone(), funcs, call_stack, &vars);
-                    vars.insert(ident, (ty.clone(), v));
-                }
+fn run_block(block: &Vec<ast::AstNode>, vars: &mut HashMap<String, (String, ast::AstNode)>, funcs: &HashMap<String, ast::AstNode>, call_stack: &mut Vec<String>, ret_ty: &Option<String>) -> Option<(String, ast::AstNode)> {
+    
+    for item in block {
+        match item.clone() {
+            ast::AstNode::Declaration {ty, ident, val} => {
+                let v = get_val_checked(val, ty.clone(), funcs, call_stack, &vars);
+                vars.insert(ident, (ty, v));
+            }
 
-                ast::AstNode::FuncCall {ident, args} => {
-                    call_fn(ident, args, funcs, call_stack, &vars);
-                }
+            ast::AstNode::ValAssign {ident, val} => {
+                let (ty, _) = vars.get(&ident).unwrap();
+                let v = get_val_checked(val, ty.clone(), funcs, call_stack, &vars);
+                vars.insert(ident, (ty.clone(), v));
+            }
 
-                ast::AstNode::ReturnStmt(stmt) => {
-                    let ret = ret_ty.clone().unwrap();
+            ast::AstNode::FuncCall {ident, args} => {
+                call_fn(ident, args, funcs, call_stack, &vars);
+            }
 
-                    return Some((ret.clone(), get_val_checked(stmt, ret, funcs, call_stack, &vars)));
+            ast::AstNode::IfStmt {condition, block, else_if_stmt, else_stmt} => {
+                let mut hasHappend = false;
+                if eval_condition(*condition, &funcs, call_stack, vars,) {
+                    run_block(&block, vars, &funcs, call_stack, &ret_ty);
+                    hasHappend = true;
                 }
+                else if else_if_stmt.is_some() {
+                    for else_if in else_if_stmt.unwrap() {
+                        if run_else_if(&else_if, vars, &funcs, call_stack, ret_ty) {
+                            hasHappend = true;
+                            break;
+                        }
+                    }
+                }
+                if !hasHappend {
+                    if else_stmt.is_some() {
+                        run_block(&else_stmt.unwrap(), vars, &funcs, call_stack, &ret_ty);
+                    }
+                }
+            }
 
-                _ => {
-                    panic!("invalid part of function block: '{:?}'", item);
-                }
+            ast::AstNode::ReturnStmt(stmt) => {
+                let ret = ret_ty.clone().unwrap();
+
+                return Some((ret.clone(), get_val_checked(stmt, ret, funcs, call_stack, &vars)));
+            }
+
+            _ => {
+                panic!("invalid part of function block: '{:?}'", item);
             }
         }
     }
     return None;
+}
+
+fn run_else_if(stmt: &ast::AstNode, vars: &mut HashMap<String, (String, ast::AstNode)>, funcs: &HashMap<String, ast::AstNode>, call_stack: &mut Vec<String>, ret_ty: &Option<String>) -> bool {
+    if let ast::AstNode::ElseIf{condition, block} = stmt {
+        if eval_condition(*condition.clone(), funcs, call_stack, vars) {
+            run_block(block, vars, funcs, call_stack, ret_ty);
+            return true;
+        }
+    }
+    return false;
+}
+
+fn eval_condition(cond: ast::AstNode, funcs: &HashMap<String, ast::AstNode>, call_stack: &mut Vec<String>, vars: &HashMap<String, (String, ast::AstNode)>) -> bool {
+    match cond {
+        ast::AstNode::BoolOp{op, lhs, rhs} => {
+            match op {
+                ast::BoolOp::Equal => {
+                    let (ls, rs) = extract_vals(lhs, rhs, funcs, call_stack, vars);
+                    return ls == rs;
+                }
+                ast::BoolOp::NotEqual => {
+                    let (ls, rs) = extract_vals(lhs, rhs, funcs, call_stack, vars);
+                    return ls != rs;
+                }
+                ast::BoolOp::GreaterThan => {
+                    let (ls, rs) = extract_vals(lhs, rhs, funcs, call_stack, vars);
+                    return ls > rs;
+                }
+                ast::BoolOp::LessThan => {
+                    let (ls, rs) = extract_vals(lhs, rhs, funcs, call_stack, vars);
+                    return ls < rs;
+                }
+                ast::BoolOp::GreaterThanEqual => {
+                    let (ls, rs) = extract_vals(lhs, rhs, funcs, call_stack, vars);
+                    return ls >= rs;
+                }
+                ast::BoolOp::LessThanEqual => {
+                    let (ls, rs) = extract_vals(lhs, rhs, funcs, call_stack, vars);
+                    return ls <= rs;
+                }
+            }
+        }
+
+        ast::AstNode::Bool(bol) => {
+            return bol;
+        }
+
+        _ => {
+            panic!("not yet implemented: {:?}", cond);
+        }
+    }
+    todo!();
+}
+
+fn extract_vals(lhs: Box<ast::AstNode>, rhs: Box<ast::AstNode>, funcs: &HashMap<String, ast::AstNode>, call_stack: &mut Vec<String>, vars: &HashMap<String, (String, ast::AstNode)>) -> (i32, i32) {
+    let l = get_val(lhs, funcs, call_stack, vars).1;
+    let r = get_val(rhs, funcs, call_stack, vars).1;
+
+    let mut ls = 0;
+    let mut rs = 0;
+
+    if let ast::AstNode::Integer(int) = l {
+        ls = int;
+    }
+    else {panic!()}
+    
+    if let ast::AstNode::Integer(int) = r {
+        rs = int;
+    }
+    else {panic!()}
+
+    return (ls, rs);
 }
 
 fn call_fn(ident: String, args: Vec<ast::AstNode>, funcs: &HashMap<String, ast::AstNode>, call_stack: &mut Vec<String>, vars: &HashMap<String, (String, ast::AstNode)>) -> Option<(String, ast::AstNode)> {

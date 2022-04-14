@@ -19,9 +19,18 @@ block = {
         decl
       | funcCall
       | valAssign
+      | ifStmt
     )*
      ~ returnStmt?
 }
+
+ifStmt =    { "if" ~ "(" ~ condition ~ ")" ~ "{" ~ block ~ "}" ~
+             ("else" ~ "if" ~ "(" ~ condition ~ ")" ~ "{" ~ block ~ "}")* ~
+             ("else" ~ "{" ~ block ~ "}")? }
+
+condition =  { bool | boolExpr | innerFuncCall }
+
+boolExpr =     { Expr ~ boolOp ~ Expr }
 
 returnStmt = 	 { "return" ~ Expr ~ EOS }
 
@@ -40,6 +49,8 @@ Product =        { Value ~ ((mul | div) ~ Value)* }
 
 Value =          _{ int | innerFuncCall | ident | "(" ~ Expr ~ ")" }
 
+boolOp =        _{ equal | greaterThan | lessThan | greaterThanEqual | lessThanEqual }
+
 unaryOperation =_{ plus | minus }
 operation =     _{ plus | minus | div | mul }
 
@@ -47,10 +58,18 @@ plus =  { "+" }
 minus = { "-" }
 div =   { "/" }
 mul =   { "*" }
+equal = { "==" }
+notEqual = { "!=" }
+greaterThan = { ">" }
+lessThan = { "<" }
+greaterThanEqual = { ">=" }
+lessThanEqual = { "<=" }
 
 int = 			@{ ASCII_DIGIT+ }
 
 string = 		@{ "\"" ~ ( (!"\"" ~ ANY) )* ~ "\"" }
+
+bool =      @{"true" | "false"}
 
 args = 			 { arg ~ ("," ~ arg)* }
 
