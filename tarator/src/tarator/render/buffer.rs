@@ -7,6 +7,8 @@
 //! - IndexBuffer
 //! VertexArray consist of both VertexBuffer and IndexBuffer 
 
+use crate::tarator::core::Vector;
+
 /// ## ShaderDataType
 /// Enum of different Shader data types used in shaders
 #[derive(Clone, Copy)]
@@ -80,14 +82,14 @@ impl BufferElement {
 
 pub struct BufferLayout {
     #[allow(unused)]
-    elements: Vec<BufferElement>,
+    elements: Vector<BufferElement>,
     #[allow(unused)]
     stride: u32
 }
 
 impl BufferLayout {
     #[allow(unused)]
-    fn new(element: Vec<BufferElement>) -> BufferLayout {
+    fn new(element: Vector<BufferElement>) -> BufferLayout {
         let mut buffer_layout: BufferLayout = BufferLayout { elements: element, stride: 0 };
         buffer_layout.calculate_offsets_and_stride();
         return buffer_layout;
@@ -95,7 +97,7 @@ impl BufferLayout {
     #[allow(unused)]
     fn get_stride(&self) -> u32 { return self.stride; }
     #[allow(unused)]
-    fn get_elements(&self) -> Vec<BufferElement> { return self.elements.clone();  }
+    fn get_elements(&self) -> Vector<BufferElement> { return self.elements.clone();  }
     fn calculate_offsets_and_stride(&mut self) {
         let mut offset: u32 = 0;
         self.stride = 0;

@@ -1,19 +1,31 @@
-use crate::tarator::{
-    window::{WindowProps, Window, self},
+use crate::{tarator::{
+    window::{WindowProps, Window},
     event::{
-        Event,
+        *,
         application_event::*,
         key_event::*
     },
-    core::{UPtr, SPtr}
+    core::{UPtr, SPtr}},
+    platform::winit::winit_keycode::get_tr_keycode
 };
-use winit::{
-    dpi::LogicalSize,
-    window::WindowBuilder,
-    platform::run_return::EventLoopExtRunReturn,
-    event_loop::ControlFlow
-};
-
+mod w {
+    pub use winit::{
+        dpi::LogicalSize,
+        window::WindowBuilder,
+        event_loop::ControlFlow,
+        event::{
+            WindowEvent,
+            KeyboardInput,
+            MouseButton,
+            MouseScrollDelta,
+            Event,
+            ElementState
+        }
+    };
+}
+use winit::platform::run_return::EventLoopExtRunReturn;
+/// ## WinitWindowData
+/// 
 struct WinitWindowData/*<'a>*/ {
     #[allow(unused)]
     title: String,
@@ -26,42 +38,43 @@ struct WinitWindowData/*<'a>*/ {
 }
 /// ## WGPU Implementation of window trait
 /// tarator/window.rs
-pub struct WinitWindow/*<'a>*/ {
+pub struct WinitWindow {
     #[allow(unused)]
     event_loop: UPtr<winit::event_loop::EventLoop<()>>,
     #[allow(unused)]
     window: UPtr<winit::window::Window>,
     #[allow(unused)]
-    data: WinitWindowData/*<'a>*/
+    data: WinitWindowData
 }
-impl/*<'a>*/ Window for WinitWindow/*<'a>*/ {
+impl Window for WinitWindow {
     fn update(&mut self) -> SPtr<dyn Event> {
         let mut return_event: SPtr<dyn Event> = SPtr::new(ApplicationUpdateEvent::default());
+        // get event from winit
         self.event_loop.run_return(|event, _target, control_flow| {
-            *control_flow = ControlFlow::Poll;
+            *control_flow = w::ControlFlow::Exit; // we wan't to immediately exit so we can return a proper event every update loop cycle
             match event {
-                winit::event::Event::WindowEvent {
+                w::Event::WindowEvent {
                     ref event,
                     window_id,
                 } if window_id == self.window.id() => {
                         match event {
-                            winit::event::WindowEvent::CloseRequested => {
-                                *control_flow = ControlFlow::Exit;
+                            w::WindowEvent::CloseRequested => {
                                 return_event = SPtr::new(WindowCloseEvent::default());
                             },
-                            winit::event::WindowEvent::KeyboardInput {
-                                input: winit::event::KeyboardInput {
-                                    state: winit::event::ElementState::Pressed,
+                            w::WindowEvent::KeyboardInput {
+                                input: w::KeyboardInput {
+                                    state: w::ElementState::Pressed,
+                                    virtual_keycode: Some(keycode),
                                     ..
                                 },
                                 ..
                             } => {
-                                return_event = SPtr::new(KeyPressedEvent::default());
+                                return_event = SPtr::new(KeyPressedEvent::new(get_tr_keycode(keycode)));
                             },
                             _ => {}
                         }
                 },
-                _ => ()
+                _ => {}
             };
         });
         return return_event;
@@ -74,7 +87,7 @@ impl/*<'a>*/ Window for WinitWindow/*<'a>*/ {
     fn get_vsync_enabled(&self) -> bool { return self.data.vsync; }
 
     #[allow(unused)]
-    fn new(window_props: &WindowProps) -> WinitWindow/*<'a>*/ {
+    fn new(window_props: &WindowProps) -> WinitWindow {
         TR_INFO!("Executing WinitWindow::new();\n");
         let event_loop= winit::event_loop::EventLoop::new();
         let data: WinitWindowData = WinitWindowData {
@@ -83,8 +96,8 @@ impl/*<'a>*/ Window for WinitWindow/*<'a>*/ {
             height: window_props.height,
             vsync: true                  // VSYNC IS HARDCODED HERE
         };
-        let window = match WindowBuilder::new()
-                .with_inner_size(LogicalSize {
+        let window = match w::WindowBuilder::new()
+                .with_inner_size(w::LogicalSize {
                     width: data.width,
                     height: data.height
                 })

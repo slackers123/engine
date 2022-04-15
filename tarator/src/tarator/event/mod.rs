@@ -39,9 +39,10 @@ bitflags! {
 pub trait Event {
     fn get_category(&self) -> EventCategory;
     fn get_action(&self) -> EventAction;
-    #[allow(unused)]
-    fn is_in_category(&self, category: EventCategory) -> bool { return matches!(self.get_category(), category); }
+    fn is_in_category(&self, category: EventCategory) -> bool { return self.get_category() == category; }
+    fn is_in_action(&self, action: EventAction) -> bool { return self.get_action() == action; }
     fn set_handled_callback(&mut self, func: &fn()->bool);
+    fn as_any(&self) -> &dyn std::any::Any;
 }
 /// ## Event Implementations
 /// Gets rid of boilerplate code for the implementation of every single event struct
@@ -52,6 +53,9 @@ macro_rules! INTERN_EVENT_IMPLEMENT {
             fn get_category(&self) -> EventCategory { return self.event_category; }
             fn get_action(&self) -> EventAction { return self.event_type; }
             fn set_handled_callback(&mut self, func: &fn()->bool) { self.handled = func(); }
+            fn as_any(&self) -> &dyn std::any::Any {
+                return self;
+            }
         }
     };
 }

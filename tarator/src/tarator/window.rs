@@ -31,7 +31,17 @@ impl Default for WindowProps {
 pub type EventCallbackFn<'a, T> = &'a fn(event: &T);
 /// ## Window
 /// Implemented in platform/*
+/// ```
+/// fn update(&mut self) -> dyn Event;
+/// fn get_width(&self);
+/// fn get_height(&self);
+/// fn set_vsync(&mut self, enabled: bool);
+/// fn get_vsync_enabled(&self) -> bool;
+/// fn new(window_props: &WindowProps) -> Self;
+/// ```
 pub trait Window {
+    /// ### Window::update
+    /// makes all updates nececcary for window and returns event
     fn update(&mut self) -> SPtr<dyn Event>;
     fn get_width(&self);
     fn get_height(&self);

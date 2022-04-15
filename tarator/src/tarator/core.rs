@@ -21,6 +21,28 @@ macro_rules! BIT {
         (1 << $arg)
     };
 }
+/// ## CAST!
+/// Dyn Traits which have as_any() implemented can be casted with this macro
+/// Example:
+/// ```
+/// trait Foo {
+///  fn as_any(&self) -> &dyn std::any::Any; 
+/// }
+/// struct Bar{} 
+/// impl Foo for Bar {
+///   fn as_any(&self) -> &dyn std::any::Any { return self; }
+/// }
+/// fn main() {
+///   let f: &dyn Foo = &Bar{};
+///   CAST!(f, Bar);
+/// }
+/// ```
+#[macro_export]
+macro_rules! CAST {
+    ($arg:expr, $label:tt) => {
+        $arg.as_any().downcast_ref::<$label>().expect("CAST FAILED!");
+    };
+}
 /// # Smart Pointers
 /// Currently only implemented using std, but considering to write into own memory manager
 /// ## UPtr

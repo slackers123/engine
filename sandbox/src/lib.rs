@@ -1,11 +1,10 @@
-#[allow(unused)]
 #[macro_use]
 extern crate tarator;
 use tarator::{tarator::{
     application::Application,
     window::{WindowProps, Window},
     core::{UPtr, SPtr},
-    event::*,
+    event::{*, key_event::{KeyEvent, KeyPressedEvent}},
     layer::{Layer, LayerStack}
 }};
 
@@ -22,8 +21,9 @@ impl Layer for ExampleLayer {
         return self.name.clone();
     }
     fn event(&self, event: &dyn Event) {
-        if event.get_action() == EventAction::KEYPRESSED {
-            TR_TRACE!("KeyPressedEvent\n");
+        if event.is_in_action(EventAction::KEYPRESSED) {
+            let key_pressed_event: &KeyPressedEvent = CAST!(event, KeyPressedEvent);
+            println!("{}", key_pressed_event.get_key_code());
         }
     }
 }

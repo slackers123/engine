@@ -16,5 +16,5 @@ pub trait RenderApi {
     fn set_clear_color(&self); // missing property "color"
     fn clear(&self);
     fn draw_indexed(&self); // missing property "vertex_array"
-    fn get_api(&self) -> API;
+    fn get_api() -> API;
 }
