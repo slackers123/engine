@@ -21,6 +21,7 @@ fn main() {
 
     let pairs: Pairs<Rule> = TarParser::parse(Rule::Program, program.as_str()).unwrap();
 
+    #[allow(unused)]
     let (defs, funcs) = ast::parse_to_ast(pairs);
 
     let program = fs::read_to_string("tar.lock").unwrap();

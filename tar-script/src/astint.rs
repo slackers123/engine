@@ -3,10 +3,12 @@ use std::fmt::Display;
 
 use crate::ast;
 
+#[allow(unused)]
 fn log<I: Display>(inp: I) {
     println!("{}", inp);
 }
 
+#[allow(unused)]
 fn error<I: Display>(inp: I, call_stack: &Vec<String>) {
     println!("Error: {}", inp);
     println!("call_stack: {:?}", call_stack);
@@ -14,6 +16,7 @@ fn error<I: Display>(inp: I, call_stack: &Vec<String>) {
 }
 
 
+#[allow(unused)]
 pub fn interpret(defs: Vec<ast::AstNode>, funcs: HashMap<String, ast::AstNode>) {
     // todos (display in console)
 
@@ -112,6 +115,7 @@ fn run_block(block: &Vec<ast::AstNode>, vars: &mut HashMap<String, (String, ast:
             ast::AstNode::ValAssign {ident, val} => {
                 let (ty, _) = vars.get(&ident).unwrap();
                 let v = get_val_checked(val, ty.clone(), funcs, call_stack, &vars);
+                #[allow(mutable_borrow_reservation_conflict)]
                 vars.insert(ident, (ty.clone(), v));
             }
 
@@ -120,20 +124,20 @@ fn run_block(block: &Vec<ast::AstNode>, vars: &mut HashMap<String, (String, ast:
             }
 
             ast::AstNode::IfStmt {condition, block, else_if_stmt, else_stmt} => {
-                let mut hasHappend = false;
+                let mut has_happend = false;
                 if eval_condition(*condition, &funcs, call_stack, vars,) {
                     run_block(&block, vars, &funcs, call_stack, &ret_ty);
-                    hasHappend = true;
+                    has_happend = true;
                 }
                 else if else_if_stmt.is_some() {
                     for else_if in else_if_stmt.unwrap() {
                         if run_else_if(&else_if, vars, &funcs, call_stack, ret_ty) {
-                            hasHappend = true;
+                            has_happend = true;
                             break;
                         }
                     }
                 }
-                if !hasHappend {
+                if !has_happend {
                     if else_stmt.is_some() {
                         run_block(&else_stmt.unwrap(), vars, &funcs, call_stack, &ret_ty);
                     }
@@ -210,7 +214,9 @@ fn extract_vals(lhs: Box<ast::AstNode>, rhs: Box<ast::AstNode>, funcs: &HashMap<
     let l = get_val(lhs, funcs, call_stack, vars).1;
     let r = get_val(rhs, funcs, call_stack, vars).1;
 
+    #[allow(unused_assignments)]
     let mut ls = 0;
+    #[allow(unused_assignments)]
     let mut rs = 0;
 
     if let ast::AstNode::Integer(int) = l {
@@ -266,10 +272,6 @@ fn eval_binop(op: ast::BinOp, lhs: Box<ast::AstNode>, rhs: Box<ast::AstNode>, fu
             let r = get_int(rhs, funcs, call_stack, vars);
 
             return ("int".to_owned(), ast::AstNode::Integer(l/r));
-        }
-
-        _ => {
-            panic!("unsupported op: {:?}", op);
         }
     }
 }

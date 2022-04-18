@@ -1,6 +1,5 @@
-use std::fmt::{Display, Debug};
+use std::fmt::Debug;
 use std::collections::HashMap;
-use std::process::Command;
 use std::fs;
 
 use serde::{Serialize, Deserialize};
@@ -59,6 +58,7 @@ fn print_val(val: Val) {
     }
 }
 
+#[allow(unused)]
 pub fn store_bc(path: String, funcs: HashMap<String, (Vec<u8>, Vec<Val>)>, stack: Vec<Val>, entry: String) {
     let j = serde_json::to_string(&(funcs.clone(), stack.clone(), "main".to_owned())).unwrap();
 
@@ -297,7 +297,7 @@ pub fn run_func(name: String, funcs: &HashMap<String, (Vec<u8>, Vec<Val>)>, stac
                         }
                     }
 
-                    Val::String(v) => {
+                    Val::String(_) => {
                         panic!("cannot compare strings");
                     }
 
@@ -339,7 +339,7 @@ pub fn run_func(name: String, funcs: &HashMap<String, (Vec<u8>, Vec<Val>)>, stac
                         }
                     }
 
-                    Val::String(v) => {
+                    Val::String(_) => {
                         panic!("cannot compare strings");
                     }
 
