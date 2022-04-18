@@ -207,7 +207,6 @@ fn eval_condition(cond: ast::AstNode, funcs: &HashMap<String, ast::AstNode>, cal
             panic!("not yet implemented: {:?}", cond);
         }
     }
-    todo!();
 }
 
 fn extract_vals(lhs: Box<ast::AstNode>, rhs: Box<ast::AstNode>, funcs: &HashMap<String, ast::AstNode>, call_stack: &mut Vec<String>, vars: &HashMap<String, (String, ast::AstNode)>) -> (i32, i32) {
