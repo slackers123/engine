@@ -5,7 +5,7 @@ use crate::{tarator::{
         application_event::*,
         key_event::*
     },
-    core::{UPtr, SPtr, Vector}},
+    core::{UPtr, Vector}},
     platform::winit::winit_keycode::get_tr_keycode
 };
 mod w {
@@ -49,6 +49,7 @@ pub struct WinitWindow {
 impl Window for WinitWindow {
     fn update(&mut self) -> Vector<UPtr<dyn Event>> {
         let mut return_events: Vector<UPtr<dyn Event>> = Vector::new();
+        return_events.push(UPtr::new(ApplicationUpdateEvent::default()));
         // get event from winit
         self.event_loop.run_return(|event, _target, control_flow| {
             *control_flow = w::ControlFlow::Exit; // we wan't to immediately exit so we can return a proper event every update loop cycle
@@ -69,7 +70,7 @@ impl Window for WinitWindow {
                                 },
                                 ..
                             } => {
-                                return_events.push(UPtr::new(KeyPressedEvent::new(get_tr_keycode(keycode))));
+                                return_events.push(UPtr::new(KeyPressedEvent::new(get_tr_keycode(keycode), 0)));
                             },
                             _ => {}
                         }

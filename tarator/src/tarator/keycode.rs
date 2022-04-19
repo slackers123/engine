@@ -1,311 +1,282 @@
-#[macro_export]macro_rules! TR_LBUTTON          {()=>{0x01};}
-#[macro_export]macro_rules! TR_RBUTTON          {()=>{0x02};}
-#[macro_export]macro_rules! TR_CANCEL           {()=>{0x03};}
-#[macro_export]macro_rules! TR_MBUTTON          {()=>{0x04};}
-
-#[macro_export]macro_rules! TR_XBUTTON1         {()=>{0x05};}
-#[macro_export]macro_rules! TR_XBUTTON2         {()=>{0x06};}
-
-#[macro_export]macro_rules! TR_BACK             {()=>{0x08};}
-#[macro_export]macro_rules! TR_TAB              {()=>{0x09};}
-
-#[macro_export]macro_rules! TR_CLEAR            {()=>{0x0C};}
-#[macro_export]macro_rules! TR_RETURN           {()=>{0x0D};}
-
-#[macro_export]macro_rules! TR_SHIFT            {()=>{0x10};}
-#[macro_export]macro_rules! TR_CONTROL          {()=>{0x11};}
-#[macro_export]macro_rules! TR_MENU             {()=>{0x12};}
-#[macro_export]macro_rules! TR_PAUSE            {()=>{0x13};}
-#[macro_export]macro_rules! TR_CAPITAL          {()=>{0x14};}
-
-#[macro_export]macro_rules! TR_KANA             {()=>{0x15};}
-#[macro_export]macro_rules! TR_HANGUL           {()=>{0x15};}
-#[macro_export]macro_rules! TR_IME_ON           {()=>{0x16};}
-#[macro_export]macro_rules! TR_JUNJA            {()=>{0x17};}
-#[macro_export]macro_rules! TR_FINAL            {()=>{0x18};}
-#[macro_export]macro_rules! TR_HANJA            {()=>{0x19};}
-#[macro_export]macro_rules! TR_KANJI            {()=>{0x19};}
-#[macro_export]macro_rules! TR_IME_OFF          {()=>{0x1A};}
-
-#[macro_export]macro_rules! TR_ESCAPE           {()=>{0x1B};}
-
-#[macro_export]macro_rules! TR_CONVERT          {()=>{0x1C};}
-#[macro_export]macro_rules! TR_NONCONVERT       {()=>{0x1D};}
-#[macro_export]macro_rules! TR_ACCEPT           {()=>{0x1E};}
-#[macro_export]macro_rules! TR_MODECHANGE       {()=>{0x1F};}
-
-#[macro_export]macro_rules! TR_SPACE            {()=>{0x20};}
-#[macro_export]macro_rules! TR_PRIOR            {()=>{0x21};}
-#[macro_export]macro_rules! TR_NEXT             {()=>{0x22};}
-#[macro_export]macro_rules! TR_END              {()=>{0x23};}
-#[macro_export]macro_rules! TR_HOME             {()=>{0x24};}
-#[macro_export]macro_rules! TR_LEFT             {()=>{0x25};}
-#[macro_export]macro_rules! TR_UP               {()=>{0x26};}
-#[macro_export]macro_rules! TR_RIGHT            {()=>{0x27};}
-#[macro_export]macro_rules! TR_DOWN             {()=>{0x28};}
-#[macro_export]macro_rules! TR_SELECT           {()=>{0x29};}
-#[macro_export]macro_rules! TR_PRINT            {()=>{0x2A};}
-#[macro_export]macro_rules! TR_EXECUTE          {()=>{0x2B};}
-#[macro_export]macro_rules! TR_SNAPSHOT         {()=>{0x2C};}
-#[macro_export]macro_rules! TR_INSERT           {()=>{0x2D};}
-#[macro_export]macro_rules! TR_DELETE           {()=>{0x2E};}
-#[macro_export]macro_rules! TR_HELP             {()=>{0x2F};}
-
-#[macro_export]macro_rules! TR_0                {()=>{0x30};}
-#[macro_export]macro_rules! TR_1                {()=>{0x31};}
-#[macro_export]macro_rules! TR_2                {()=>{0x32};}
-#[macro_export]macro_rules! TR_3                {()=>{0x33};}
-#[macro_export]macro_rules! TR_4                {()=>{0x34};}
-#[macro_export]macro_rules! TR_5                {()=>{0x35};}
-#[macro_export]macro_rules! TR_6                {()=>{0x36};}
-#[macro_export]macro_rules! TR_7                {()=>{0x37};}
-#[macro_export]macro_rules! TR_8                {()=>{0x38};}
-#[macro_export]macro_rules! TR_9                {()=>{0x39};}
-
-#[macro_export]macro_rules! TR_A                {()=>{0x41};}
-#[macro_export]macro_rules! TR_B                {()=>{0x42};}
-#[macro_export]macro_rules! TR_C                {()=>{0x43};}
-#[macro_export]macro_rules! TR_D                {()=>{0x44};}
-#[macro_export]macro_rules! TR_E                {()=>{0x45};}
-#[macro_export]macro_rules! TR_F                {()=>{0x46};}
-#[macro_export]macro_rules! TR_G                {()=>{0x47};}
-#[macro_export]macro_rules! TR_H                {()=>{0x48};}
-#[macro_export]macro_rules! TR_I                {()=>{0x49};}
-#[macro_export]macro_rules! TR_J                {()=>{0x4A};}
-#[macro_export]macro_rules! TR_K                {()=>{0x4B};}
-#[macro_export]macro_rules! TR_L                {()=>{0x4C};}
-#[macro_export]macro_rules! TR_M                {()=>{0x4D};}
-#[macro_export]macro_rules! TR_N                {()=>{0x4E};}
-#[macro_export]macro_rules! TR_O                {()=>{0x4F};}
-#[macro_export]macro_rules! TR_P                {()=>{0x50};}
-#[macro_export]macro_rules! TR_Q                {()=>{0x51};}
-#[macro_export]macro_rules! TR_R                {()=>{0x52};}
-#[macro_export]macro_rules! TR_S                {()=>{0x53};}
-#[macro_export]macro_rules! TR_T                {()=>{0x54};}
-#[macro_export]macro_rules! TR_U                {()=>{0x55};}
-#[macro_export]macro_rules! TR_V                {()=>{0x56};}
-#[macro_export]macro_rules! TR_W                {()=>{0x57};}
-#[macro_export]macro_rules! TR_X                {()=>{0x58};}
-#[macro_export]macro_rules! TR_Y                {()=>{0x59};}
-#[macro_export]macro_rules! TR_Z                {()=>{0x5A};}
-
-#[macro_export]macro_rules! TR_LWIN             {()=>{0x5B};}
-#[macro_export]macro_rules! TR_RWIN             {()=>{0x5C};}
-#[macro_export]macro_rules! TR_APPS             {()=>{0x5D};}
-
-#[macro_export]macro_rules! TR_SLEEP            {()=>{0x5F};}
-
-#[macro_export]macro_rules! TR_NUMPAD0          {()=>{0x60};}
-#[macro_export]macro_rules! TR_NUMPAD1          {()=>{0x61};}
-#[macro_export]macro_rules! TR_NUMPAD2          {()=>{0x62};}
-#[macro_export]macro_rules! TR_NUMPAD3          {()=>{0x63};}
-#[macro_export]macro_rules! TR_NUMPAD4          {()=>{0x64};}
-#[macro_export]macro_rules! TR_NUMPAD5          {()=>{0x65};}
-#[macro_export]macro_rules! TR_NUMPAD6          {()=>{0x66};}
-#[macro_export]macro_rules! TR_NUMPAD7          {()=>{0x67};}
-#[macro_export]macro_rules! TR_NUMPAD8          {()=>{0x68};}
-#[macro_export]macro_rules! TR_NUMPAD9          {()=>{0x69};}
-#[macro_export]macro_rules! TR_MULTIPLY         {()=>{0x6A};}
-#[macro_export]macro_rules! TR_ADD              {()=>{0x6B};}
-#[macro_export]macro_rules! TR_SEPERATOR        {()=>{0x6C};}
-#[macro_export]macro_rules! TR_SUBTRACT         {()=>{0x6D};}
-#[macro_export]macro_rules! TR_DECIAML          {()=>{0x6E};}
-#[macro_export]macro_rules! TR_DIVIDE           {()=>{0x6F};}
-#[macro_export]macro_rules! TR_F1               {()=>{0x70};}
-#[macro_export]macro_rules! TR_F2               {()=>{0x71};}
-#[macro_export]macro_rules! TR_F3               {()=>{0x72};}
-#[macro_export]macro_rules! TR_F4               {()=>{0x73};}
-#[macro_export]macro_rules! TR_F5               {()=>{0x74};}
-#[macro_export]macro_rules! TR_F6               {()=>{0x75};}
-#[macro_export]macro_rules! TR_F7               {()=>{0x76};}
-#[macro_export]macro_rules! TR_F8               {()=>{0x77};}
-#[macro_export]macro_rules! TR_F9               {()=>{0x78};}
-#[macro_export]macro_rules! TR_F10              {()=>{0x79};}
-#[macro_export]macro_rules! TR_F11              {()=>{0x7A};}
-#[macro_export]macro_rules! TR_F12              {()=>{0x7B};}
-#[macro_export]macro_rules! TR_F13              {()=>{0x7C};}
-#[macro_export]macro_rules! TR_F14              {()=>{0x7D};}
-#[macro_export]macro_rules! TR_F15              {()=>{0x7E};}
-#[macro_export]macro_rules! TR_F16              {()=>{0x7F};}
-#[macro_export]macro_rules! TR_F17              {()=>{0x80};}
-#[macro_export]macro_rules! TR_F18              {()=>{0x81};}
-#[macro_export]macro_rules! TR_F19              {()=>{0x82};}
-#[macro_export]macro_rules! TR_F20              {()=>{0x83};}
-#[macro_export]macro_rules! TR_F21              {()=>{0x84};}
-#[macro_export]macro_rules! TR_F22              {()=>{0x85};}
-#[macro_export]macro_rules! TR_F23              {()=>{0x86};}
-#[macro_export]macro_rules! TR_F24              {()=>{0x87};}
-
+pub const TR_RBUTTON   :u32=0x02;
+pub const TR_CANCEL    :u32=0x03;
+pub const TR_MBUTTON   :u32=0x04;
+pub const TR_XBUTTON1  :u32=0x05;
+pub const TR_XBUTTON2  :u32=0x06;
+pub const TR_BACK      :u32=0x08;
+pub const TR_TAB       :u32=0x09;
+pub const TR_CLEAR     :u32=0x0C;
+pub const TR_RETURN    :u32=0x0D;
+pub const TR_SHIFT     :u32=0x10;
+pub const TR_CONTROL   :u32=0x11;
+pub const TR_MENU      :u32=0x12;
+pub const TR_PAUSE     :u32=0x13;
+pub const TR_CAPITAL   :u32=0x14;
+pub const TR_KANA      :u32=0x15;
+pub const TR_HANGUL    :u32=0x15;
+pub const TR_IME_ON    :u32=0x16;
+pub const TR_JUNJA     :u32=0x17;
+pub const TR_FINAL     :u32=0x18;
+pub const TR_HANJA     :u32=0x19;
+pub const TR_KANJI     :u32=0x19;
+pub const TR_IME_OFF   :u32=0x1A;
+pub const TR_ESCAPE    :u32=0x1B;
+pub const TR_NONCONVERT:u32=0x1D;
+pub const TR_ACCEPT    :u32=0x1E;
+pub const TR_MODECHANGE:u32=0x1F;
+pub const TR_SPACE     :u32=0x20;
+pub const TR_PRIOR     :u32=0x21;
+pub const TR_NEXT      :u32=0x22;
+pub const TR_END       :u32=0x23;
+pub const TR_HOME      :u32=0x24;
+pub const TR_LEFT      :u32=0x25;
+pub const TR_UP        :u32=0x26;
+pub const TR_RIGHT     :u32=0x27;
+pub const TR_LBUTTON   :u32=0x01;
+pub const TR_DOWN      :u32=0x28;
+pub const TR_SELECT    :u32=0x29;
+pub const TR_PRINT     :u32=0x2A;
+pub const TR_EXECUTE   :u32=0x2B;
+pub const TR_SNAPSHOT  :u32=0x2C;
+pub const TR_INSERT    :u32=0x2D;
+pub const TR_DELETE    :u32=0x2E;
+pub const TR_HELP      :u32=0x2F;
+pub const TR_0         :u32=0x30;
+pub const TR_1         :u32=0x31;
+pub const TR_2         :u32=0x32;
+pub const TR_3         :u32=0x33;
+pub const TR_4         :u32=0x34;
+pub const TR_5         :u32=0x35;
+pub const TR_6         :u32=0x36;
+pub const TR_7         :u32=0x37;
+pub const TR_8         :u32=0x38;
+pub const TR_9         :u32=0x39;
+pub const TR_A         :u32=0x41;
+pub const TR_B         :u32=0x42;
+pub const TR_C         :u32=0x43;
+pub const TR_D         :u32=0x44;
+pub const TR_E         :u32=0x45;
+pub const TR_CONVERT   :u32=0x1C;
+pub const TR_F         :u32=0x46;
+pub const TR_G         :u32=0x47;
+pub const TR_H         :u32=0x48;
+pub const TR_I         :u32=0x49;
+pub const TR_J         :u32=0x4A;
+pub const TR_K         :u32=0x4B;
+pub const TR_L         :u32=0x4C;
+pub const TR_M         :u32=0x4D;
+pub const TR_N         :u32=0x4E;
+pub const TR_O         :u32=0x4F;
+pub const TR_P         :u32=0x50;
+pub const TR_Q         :u32=0x51;
+pub const TR_R         :u32=0x52;
+pub const TR_S         :u32=0x53;
+pub const TR_T         :u32=0x54;
+pub const TR_U         :u32=0x55;
+pub const TR_V         :u32=0x56;
+pub const TR_W         :u32=0x57;
+pub const TR_X         :u32=0x58;
+pub const TR_Y         :u32=0x59;
+pub const TR_Z         :u32=0x5A;
+pub const TR_LWIN      :u32=0x5B;
+pub const TR_RWIN      :u32=0x5C;
+pub const TR_APPS      :u32=0x5D;
+pub const TR_SLEEP     :u32=0x5F;
+pub const TR_NUMPAD1   :u32=0x61;
+pub const TR_NUMPAD2   :u32=0x62;
+pub const TR_NUMPAD3   :u32=0x63;
+pub const TR_NUMPAD4   :u32=0x64;
+pub const TR_NUMPAD5   :u32=0x65;
+pub const TR_NUMPAD6  :u32=0x66;
+pub const TR_NUMPAD7  :u32=0x67;
+pub const TR_NUMPAD8  :u32=0x68;
+pub const TR_NUMPAD9  :u32=0x69;
+pub const TR_MULTIPLY :u32=0x6A;
+pub const TR_ADD      :u32=0x6B;
+pub const TR_SEPERATOR:u32=0x6C;
+pub const TR_SUBTRACT :u32=0x6D;
+pub const TR_DECIAML  :u32=0x6E;
+pub const TR_DIVIDE   :u32=0x6F;
+pub const TR_F1       :u32=0x70;
+pub const TR_F2       :u32=0x71;
+pub const TR_F3       :u32=0x72;
+pub const TR_F4       :u32=0x73;
+pub const TR_F5       :u32=0x74;
+pub const TR_F6       :u32=0x75;
+pub const TR_F7       :u32=0x76;
+pub const TR_F8       :u32=0x77;
+pub const TR_F9       :u32=0x78;
+pub const TR_F10      :u32=0x79;
+pub const TR_F11      :u32=0x7A;
+pub const TR_F12      :u32=0x7B;
+pub const TR_F13      :u32=0x7C;
+pub const TR_F14      :u32=0x7D;
+pub const TR_F15      :u32=0x7E;
+pub const TR_F16      :u32=0x7F;
+pub const TR_F17      :u32=0x80;
+pub const TR_F18      :u32=0x81;
+pub const TR_F19      :u32=0x82;
+pub const TR_NUMPAD0  :u32=0x60;
+pub const TR_F20      :u32=0x83;
+pub const TR_F21      :u32=0x84;
+pub const TR_F22      :u32=0x85;
+pub const TR_F23      :u32=0x86;
+pub const TR_F24      :u32=0x87;
 /// reserved
-#[macro_export]macro_rules! TR_NAVIGGATION_VIEW   {()=>{0x88};}
+pub const TR_NAVIGGATION_VIEW:u32=0x88;
 /// reserved
-#[macro_export]macro_rules! TR_NAVIGGATION_MENU   {()=>{0x89};}
+pub const TR_NAVIGGATION_MENU:u32=0x89;
 /// reserved
-#[macro_export]macro_rules! TR_NAVIGGATION_UP     {()=>{0x8A};}
+pub const TR_NAVIGGATION_UP:u32=0x8A;
 /// reserved
-#[macro_export]macro_rules! TR_NAVIGGATION_DOWN   {()=>{0x8B};}
+pub const TR_NAVIGGATION_DOWN:u32=0x8B;
 /// reserved
-#[macro_export]macro_rules! TR_NAVIGGATION_LEFT   {()=>{0x8C};}
+pub const TR_NAVIGGATION_LEFT:u32=0x8C;
 /// reserved
-#[macro_export]macro_rules! TR_NAVIGGATION_RIGHT  {()=>{0x8D};}
+pub const TR_NAVIGGATION_RIGHT:u32=0x8D;
 /// reserved
-#[macro_export]macro_rules! TR_NAVIGGATION_ACCEPT {()=>{0x8E};}
+pub const TR_NAVIGGATION_ACCEPT:u32=0x8E;
 /// reserved
-#[macro_export]macro_rules! TR_NAVIGGATION_CANCEL {()=>{0x8F};}
-
-#[macro_export]macro_rules! TR_NUMLOCK          {()=>{0x90};}
-#[macro_export]macro_rules! TR_SCOLL            {()=>{0x91};}
-
+pub const TR_NAVIGGATION_CANCEL:u32=0x8F;
+pub const TR_NUMLOCK           :u32=0x90;
+pub const TR_SCOLL             :u32=0x91;
 /// '=' key on numpad
-#[macro_export]macro_rules! TR_OEM_NEC_EQUAL    {()=>{0x92};}
-
+pub const TR_OEM_NEC_EQUAL    :u32=0x92;
 /// 'Dictionary' key
-#[macro_export]macro_rules! TR_OEM_FJ_JISHO     {()=>{0x92};}
+pub const TR_OEM_FJ_JISHO     :u32=0x92;
 /// 'Unregister word' key
-#[macro_export]macro_rules! TR_OEM_FJ_MASSHOU   {()=>{0x93};}
+pub const TR_OEM_FJ_MASSHOU   :u32=0x93;
 /// 'Register word' key
-#[macro_export]macro_rules! TR_OEM_FJ_TOUROKU   {()=>{0x94};}
+pub const TR_OEM_FJ_TOUROKU   :u32=0x94;
 /// 'Left OYAYUBI' key
-#[macro_export]macro_rules! TR_OEM_FJ_LOYA      {()=>{0x95};}
+pub const TR_OEM_FJ_LOYA      :u32=0x95;
 /// 'Right OYAYUBI' key
-#[macro_export]macro_rules! TR_OEM_FJ_ROYA      {()=>{0x96};}
-
-#[macro_export]macro_rules! TR_LSHIFT           {()=>{0xA0};}
-#[macro_export]macro_rules! TR_RSHIFT           {()=>{0xA1};}
-#[macro_export]macro_rules! TR_LCONTROL         {()=>{0xA2};}
-#[macro_export]macro_rules! TR_RCONTROL         {()=>{0xA3};}
-#[macro_export]macro_rules! TR_LMENU            {()=>{0xA4};}
-#[macro_export]macro_rules! TR_RMENU            {()=>{0xA5};}
-
-#[macro_export]macro_rules! TR_WEB_BACK      {()=>{0xA6};}
-#[macro_export]macro_rules! TR_WEB_FORWARD   {()=>{0xA7};}
-#[macro_export]macro_rules! TR_WEB_REFRESH   {()=>{0xA8};}
-#[macro_export]macro_rules! TR_WEB_STOP      {()=>{0xA9};}
-#[macro_export]macro_rules! TR_WEB_SEARCH    {()=>{0xAA};}
-#[macro_export]macro_rules! TR_WEB_FAVORITES {()=>{0xAB};}
-#[macro_export]macro_rules! TR_WEB_HOME      {()=>{0xAC};}
-
-#[macro_export]macro_rules! TR_VOLUME_MUTE          {()=>{0xAD};}
-#[macro_export]macro_rules! TR_VOLUME_DOWN          {()=>{0xAE};}
-#[macro_export]macro_rules! TR_VOLUME_UP            {()=>{0xAF};}
-#[macro_export]macro_rules! TR_MEDIA_NEXT_TRACK     {()=>{0xB0};}
-#[macro_export]macro_rules! TR_MEDIA_PREV_TRACK     {()=>{0xB1};}
-#[macro_export]macro_rules! TR_MEDIA_STOP           {()=>{0xB2};}
-#[macro_export]macro_rules! TR_MEDIA_PLAY_PAUSE     {()=>{0xB3};}
-#[macro_export]macro_rules! TR_LAUNCH_MAIL          {()=>{0xB4};}
-#[macro_export]macro_rules! TR_LAUNCH_MEDIA_SELECT  {()=>{0xB5};}
-#[macro_export]macro_rules! TR_LAUNCH_APP1          {()=>{0xB6};}
-#[macro_export]macro_rules! TR_LAUNCH_APP2          {()=>{0xB7};}
-
+pub const TR_OEM_FJ_ROYA:u32=0x96;
+pub const TR_LSHIFT     :u32=0xA0;
+pub const TR_RSHIFT     :u32=0xA1;
+pub const TR_LCONTROL   :u32=0xA2;
+pub const TR_RCONTROL   :u32=0xA3;
+pub const TR_LMENU      :u32=0xA4;
+pub const TR_RMENU      :u32=0xA5;
+pub const TR_WEB_BACK     :u32=0xA6;
+pub const TR_WEB_FORWARD  :u32=0xA7;
+pub const TR_WEB_REFRESH  :u32=0xA8;
+pub const TR_WEB_STOP     :u32=0xA9;
+pub const TR_WEB_SEARCH   :u32=0xAA;
+pub const TR_WEB_FAVORITES:u32=0xAB;
+pub const TR_WEB_HOME     :u32=0xAC;
+pub const TR_VOLUME_MUTE     :u32=0xAD;
+pub const TR_VOLUME_DOWN     :u32=0xAE;
+pub const TR_VOLUME_UP       :u32=0xAF;
+pub const TR_MEDIA_NEXT_TRACK:u32=0xB0;
+pub const TR_MEDIA_PREV_TRACK:u32=0xB1;
+pub const TR_MEDIA_STOP      :u32=0xB2;
+pub const TR_MEDIA_PLAY_PAUSE:u32=0xB3;
+pub const TR_LAUNCH_MAIL        :u32=0xB4;
+pub const TR_LAUNCH_MEDIA_SELECT:u32=0xB5;
+pub const TR_LAUNCH_APP1:u32=0xB6;
+pub const TR_LAUNCH_APP2:u32=0xB7;
 /// ';:' for US
-#[macro_export]macro_rules! TR_OEM_1                            {()=>{0xBA};}
+pub const TR_OEM_1                            :u32=0xBA;
 /// '+' any country             
-#[macro_export]macro_rules! TR_OEM_PLUS                         {()=>{0xBB};}
+pub const TR_OEM_PLUS                         :u32=0xBB;
 /// ',' any country             
-#[macro_export]macro_rules! TR_OEM_COMMA                        {()=>{0xBC};}
-/// '-' any country             
-#[macro_export]macro_rules! TR_OEM_MINUS                        {()=>{0xBD};}
+pub const TR_OEM_COMMA                        :u32=0xBC;
+/// '-' any country       
+pub const TR_OEM_MINUS                        :u32=0xBD;
 /// '.' any country             
-#[macro_export]macro_rules! TR_OEM_PERIOD                       {()=>{0xBE};}
+pub const TR_OEM_PERIOD                       :u32=0xBE;
 /// '/?' for US             
-#[macro_export]macro_rules! TR_OEM_2                            {()=>{0xBF};}
+pub const TR_OEM_2                            :u32=0xBF;
 /// '`~' for US             
-#[macro_export]macro_rules! TR_OEM_3                            {()=>{0xC0};}
-
+pub const TR_OEM_3                            :u32=0xC0;
 /// reserved                
-#[macro_export]macro_rules! TR_GAMEPAD_A                        {()=>{0xC3};}
+pub const TR_GAMEPAD_A                        :u32=0xC3;
 /// reserved                
-#[macro_export]macro_rules! TR_GAMEPAD_B                        {()=>{0xC4};}
+pub const TR_GAMEPAD_B                        :u32=0xC4;
 /// reserved                
-#[macro_export]macro_rules! TR_GAMEPAD_X                        {()=>{0xC5};}
+pub const TR_GAMEPAD_X                        :u32=0xC5;
 /// reserved                
-#[macro_export]macro_rules! TR_GAMEPAD_Y                        {()=>{0xC6};}
+pub const TR_GAMEPAD_Y                        :u32=0xC6;
 /// reserved
-#[macro_export]macro_rules! TR_GAMEPAD_RIGHT_SHOULDER           {()=>{0xC7};}
+pub const TR_GAMEPAD_RIGHT_SHOULDER           :u32=0xC7;
 /// reserved
-#[macro_export]macro_rules! TR_GAMEPAD_LEFT_SHOULDER            {()=>{0xC8};}
+pub const TR_GAMEPAD_LEFT_SHOULDER            :u32=0xC8;
 /// reserved
-#[macro_export]macro_rules! TR_GAMEPAD_LEFT_TRIGGER             {()=>{0xC9};}
+pub const TR_GAMEPAD_LEFT_TRIGGER             :u32=0xC9;
 /// reserved
-#[macro_export]macro_rules! TR_GAMEPAD_RIGHT_TRIGGER            {()=>{0xCA};}
+pub const TR_GAMEPAD_RIGHT_TRIGGER            :u32=0xCA;
 /// reserved
-#[macro_export]macro_rules! TR_GAMEPAD_DPAD_UP                  {()=>{0xCB};}
+pub const TR_GAMEPAD_DPAD_UP                  :u32=0xCB;
 /// reserved
-#[macro_export]macro_rules! TR_GAMEPAD_DPAD_DOWN                {()=>{0xCC};}
+pub const TR_GAMEPAD_DPAD_DOWN                :u32=0xCC;
 /// reserved
-#[macro_export]macro_rules! TR_GAMEPAD_DPAD_LEFT                {()=>{0xCD};}
+pub const TR_GAMEPAD_DPAD_LEFT                :u32=0xCD;
 /// reserved
-#[macro_export]macro_rules! TR_GAMEPAD_DPAD_RIGHT               {()=>{0xCE};}
+pub const TR_GAMEPAD_DPAD_RIGHT               :u32=0xCE;
 /// reserved
-#[macro_export]macro_rules! TR_GAMEPAD_MENU                     {()=>{0xCF};}
+pub const TR_GAMEPAD_MENU                     :u32=0xCF;
 /// reserved
-#[macro_export]macro_rules! TR_GAMEPAD_VIEW                     {()=>{0xD0};}
+pub const TR_GAMEPAD_VIEW                     :u32=0xD0;
 /// reserved
-#[macro_export]macro_rules! TR_GAMEPAD_LEFT_THUMBSTICK_BUTTON   {()=>{0xD1};}
+pub const TR_GAMEPAD_LEFT_THUMBSTICK_BUTTON   :u32=0xD1;
 /// reserved
-#[macro_export]macro_rules! TR_GAMEPAD_RIGHT_THUMBSTICK_BUTTON  {()=>{0xD2};}
+pub const TR_GAMEPAD_RIGHT_THUMBSTICK_BUTTON  :u32=0xD2;
 /// reserved
-#[macro_export]macro_rules! TR_GAMEPAD_LEFT_THUMBSTICK_UP       {()=>{0xD3};}
+pub const TR_GAMEPAD_LEFT_THUMBSTICK_UP       :u32=0xD3;
 /// reserved
-#[macro_export]macro_rules! TR_GAMEPAD_LEFT_THUMBSTICK_DOWN     {()=>{0xD4};}
+pub const TR_GAMEPAD_LEFT_THUMBSTICK_DOWN     :u32=0xD4;
 /// reserved
-#[macro_export]macro_rules! TR_GAMEPAD_LEFT_THUMBSTICK_RIGHT    {()=>{0xD5};}
+pub const TR_GAMEPAD_LEFT_THUMBSTICK_RIGHT    :u32=0xD5;
 /// reserved
-#[macro_export]macro_rules! TR_GAMEPAD_LEFT_THUMBSTICK_LEFT     {()=>{0xD6};}
+pub const TR_GAMEPAD_LEFT_THUMBSTICK_LEFT     :u32=0xD6;
 /// reserved
-#[macro_export]macro_rules! TR_GAMEPAD_RIGHT_THUMBSTICK_UP      {()=>{0xD7};}
+pub const TR_GAMEPAD_RIGHT_THUMBSTICK_UP      :u32=0xD7;
 /// reserved
-#[macro_export]macro_rules! TR_GAMEPAD_RIGHT_THUMBSTICK_DOWN    {()=>{0xD8};}
+pub const TR_GAMEPAD_RIGHT_THUMBSTICK_DOWN    :u32=0xD8;
 /// reserved
-#[macro_export]macro_rules! TR_GAMEPAD_RIGHT_THUMBSTICK_RIGHT   {()=>{0xD9};}
+pub const TR_GAMEPAD_RIGHT_THUMBSTICK_RIGHT   :u32=0xD9;
 /// reserved
-#[macro_export]macro_rules! TR_GAMEPAD_RIGHT_THUMBSTICK_LEFT    {()=>{0xDA};}
-
+pub const TR_GAMEPAD_RIGHT_THUMBSTICK_LEFT    :u32=0xDA;
 /// '[{' for US
-#[macro_export]macro_rules! TR_OEM_4            {()=>{0xDB};}
+pub const TR_OEM_4            :u32=0xDB;
 /// '\|' for US
-#[macro_export]macro_rules! TR_OEM_5            {()=>{0xDC};}
+pub const TR_OEM_5            :u32=0xDC;
 /// ']}' for US
-#[macro_export]macro_rules! TR_OEM_6            {()=>{0xDD};}
+pub const TR_OEM_6            :u32=0xDD;
 /// ''"' for US
-#[macro_export]macro_rules! TR_OEM_7            {()=>{0xDE};}
-#[macro_export]macro_rules! TR_OEM_8            {()=>{0xDF};}
-
+pub const TR_OEM_7            :u32=0xDE;
+pub const TR_OEM_8            :u32=0xDF;
 // 'AX' key on Japanese AX kbd
-#[macro_export]macro_rules! TR_OEM_AX           {()=>{0xE1};}
+pub const TR_OEM_AX           :u32=0xE1;
 /// "<>" or "\|" on RT 102-key kbd
-#[macro_export]macro_rules! TR_OEM_102          {()=>{0xE2};}
+pub const TR_OEM_102          :u32=0xE2;
 /// Help key on ICO
-#[macro_export]macro_rules! TR_ICO_HELP         {()=>{0xE3};}
+pub const TR_ICO_HELP         :u32=0xE3;
 // 00 key on ICO
-#[macro_export]macro_rules! TR_ICO_00           {()=>{0xE4};}
-
-#[macro_export]macro_rules! TR_PROCESSKEY       {()=>{0xE5};}
-
-#[macro_export]macro_rules! TR_ICO_CLEAR        {()=>{0xE7};}
-
-#[macro_export]macro_rules! TR_PACKET           {()=>{0xE7};}
-
-#[macro_export]macro_rules! TR_OEM_RESET        {()=>{0xE9};}
-#[macro_export]macro_rules! TR_OEM_JUMP         {()=>{0xEA};}
-#[macro_export]macro_rules! TR_OEM_PA1          {()=>{0xEB};}
-#[macro_export]macro_rules! TR_OEM_PA2          {()=>{0xEC};}
-#[macro_export]macro_rules! TR_OEM_PA3          {()=>{0xED};}
-#[macro_export]macro_rules! TR_OEM_WSCTRL       {()=>{0xEE};}
-#[macro_export]macro_rules! TR_OEM_CUSEL        {()=>{0xEF};}
-#[macro_export]macro_rules! TR_OEM_ATTN         {()=>{0xF0};}
-#[macro_export]macro_rules! TR_OEM_FINISH       {()=>{0xF1};}
-#[macro_export]macro_rules! TR_OEM_COPY         {()=>{0xF2};}
-#[macro_export]macro_rules! TR_OEM_AUTO         {()=>{0xF3};}
-#[macro_export]macro_rules! TR_OEM_ENLW         {()=>{0xF4};}
-#[macro_export]macro_rules! TR_OEM_BACKTAB      {()=>{0xF5};}
-
-#[macro_export]macro_rules! TR_ATTN             {()=>{0xF6};}
-#[macro_export]macro_rules! TR_CRSEL            {()=>{0xF7};}
-#[macro_export]macro_rules! TR_EXSEL            {()=>{0xF8};}
-#[macro_export]macro_rules! TR_EREOF            {()=>{0xF9};}
-#[macro_export]macro_rules! TR_PLAY             {()=>{0xFA};}
-#[macro_export]macro_rules! TR_ZOOM             {()=>{0xFB};}
-#[macro_export]macro_rules! TR_NONAME           {()=>{0xFC};}
-#[macro_export]macro_rules! TR_PA1              {()=>{0xFD};}
-#[macro_export]macro_rules! TR_OEM_CLEAR        {()=>{0xFE};}
+pub const TR_ICO_00     :u32=0xE4;
+pub const TR_PROCESSKEY :u32=0xE5;
+pub const TR_ICO_CLEAR  :u32=0xE7;
+pub const  TR_PACKET    :u32=0xE7;
+pub const TR_OEM_RESET  :u32=0xE9;
+pub const TR_OEM_JUMP   :u32=0xEA;
+pub const TR_OEM_PA1    :u32=0xEB;
+pub const TR_OEM_PA2    :u32=0xEC;
+pub const TR_OEM_PA3    :u32=0xED;
+pub const TR_OEM_WSCTRL :u32=0xEE;
+pub const TR_OEM_CUSEL  :u32=0xEF;
+pub const TR_OEM_ATTN   :u32=0xF0;
+pub const TR_OEM_FINISH :u32=0xF1;
+pub const TR_OEM_COPY   :u32=0xF2;
+pub const TR_OEM_AUTO   :u32=0xF3;
+pub const TR_OEM_ENLW   :u32=0xF4;
+pub const TR_OEM_BACKTAB:u32=0xF5;
+pub const TR_ATTN     :u32=0xF6;
+pub const TR_CRSEL    :u32=0xF7;
+pub const TR_EXSEL    :u32=0xF8;
+pub const TR_EREOF    :u32=0xF9;
+pub const TR_PLAY     :u32=0xFA;
+pub const TR_ZOOM     :u32=0xFB;
+pub const TR_NONAME   :u32=0xFC;
+pub const TR_PA1      :u32=0xFD;
+pub const TR_OEM_CLEAR:u32=0xFE;

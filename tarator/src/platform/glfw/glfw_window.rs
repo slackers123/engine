@@ -1,18 +1,23 @@
 extern crate glfw;
 
 #[allow(unused)]
-use crate::tarator::{
-    core::{UPtr, SPtr, Vector},
-    render::render_context::RenderContext,
-    window::{
-        EventCallbackFn, Null,
-        Window,
-        WindowProps
+use crate::{
+    tarator::{
+        core::{UPtr, SPtr, Vector},
+        render::render_context::RenderContext,
+        window::{
+            EventCallbackFn, Null,
+            Window,
+            WindowProps
+        },
+        event::{
+            Event,
+            application_event::*,
+            key_event::*,
+            mouse_event::*
+        }
     },
-    event::{
-        Event,
-        application_event::*
-    }
+    platform::glfw::glfw_keycode::*
 };
 mod g {
     pub extern crate glfw;
@@ -44,9 +49,49 @@ impl Window for GLFWWindow {
         #[allow(unused)]
         for (f, event) in g::flush_messages(&self.events) {
             match event {
+                g::WindowEvent::Size(x, y) => {
+                    self.data.width = x as u32;
+                    self.data.height = y as u32;
+                    return_events.push(UPtr::new(WindowResizeEvent::new(x as u32, y as u32)));
+                },
                 g::WindowEvent::Close => {
                     return_events.push(UPtr::new(WindowCloseEvent::default()));
                 },
+                g::WindowEvent::Char(keycode) => {
+                    return_events.push(UPtr::new(KeyTypedEvent::new(keycode as u32)));
+                },
+                g::WindowEvent::Key(key, keycode, action, mods) => {
+                    match action {
+                        g::Action::Press => {
+                            return_events.push(UPtr::new(KeyPressedEvent::new(get_tr_keycode(key), 0)));
+                        },
+                        g::Action::Release => {
+                            return_events.push(UPtr::new(KeyReleasedEvent::new(get_tr_keycode(key))));
+                        },
+                        g::Action::Repeat => {
+                            return_events.push(UPtr::new(KeyPressedEvent::new(get_tr_keycode(key), 1)));
+                        }
+                    };
+                },
+                g::WindowEvent::MouseButton(mousekey, action, mods) => {
+                    match action {
+                        g::Action::Press => {
+                            return_events.push(UPtr::new(MouseKeyPressedEvent::new(get_tr_mousekeycode(mousekey), 0)));
+                        },
+                        g::Action::Release => {
+                            return_events.push(UPtr::new(MouseKeyReleasedEvent::new(get_tr_mousekeycode(mousekey))));
+                        },
+                        g::Action::Repeat => {
+                            return_events.push(UPtr::new(MouseKeyPressedEvent::new(get_tr_mousekeycode(mousekey), 1)));
+                        }
+                    };
+                },
+                g::WindowEvent::Scroll(x, y) => {
+                    return_events.push(UPtr::new(MouseScrolledEvent::new(x, y)));
+                },
+                g::WindowEvent::CursorPos(x, y) => {
+                    return_events.push(UPtr::new(MouseMovedEvent::new(x, y)));
+                }
                 _ => ()
             }
         }

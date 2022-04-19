@@ -17,9 +17,9 @@ pub struct MouseMovedEvent {
     event_category: EventCategory,
     event_type: EventAction,
     #[allow(unused)]
-    move_x: f32,
+    move_x: f64,
     #[allow(unused)]
-    move_y: f32,
+    move_y: f64,
     #[allow(unused)]
     handled: bool
 }
@@ -36,9 +36,19 @@ impl Default for MouseMovedEvent {
 }
 impl MouseMovedEvent {
     #[allow(unused)]
-    fn get_move_x(&self) -> f32 { return self.move_x; }
+    pub fn get_move_x(&self) -> f64 { return self.move_x; }
     #[allow(unused)]
-    fn get_move_y(&self) -> f32 { return self.move_y; }
+    pub fn get_move_y(&self) -> f64 { return self.move_y; }
+    #[allow(unused)]
+    pub fn new(x: f64, y: f64) -> MouseMovedEvent {
+        return MouseMovedEvent {
+            event_category: EventCategory::MOUSE | EventCategory::INPUT,
+            event_type: EventAction::MOUSEMOVED,
+            move_x: x,
+            move_y: y,
+            handled: false
+        }
+    }
 }
 crate::INTERN_EVENT_IMPLEMENT!(MouseMovedEvent);
 
@@ -48,9 +58,9 @@ pub struct MouseScrolledEvent {
     event_category: EventCategory,
     event_type: EventAction,
     #[allow(unused)]
-    offset_x: f32,
+    offset_x: f64,
     #[allow(unused)]
-    offset_y: f32,
+    offset_y: f64,
     #[allow(unused)]
     handled: bool
 }
@@ -67,9 +77,19 @@ impl Default for MouseScrolledEvent {
 }
 impl MouseScrolledEvent {
     #[allow(unused)]
-    fn get_offset_x(&self) -> f32 { return self.offset_x; }
+    pub fn get_offset_x(&self) -> f64 { return self.offset_x; }
     #[allow(unused)]
-    fn get_offset_y(&self) -> f32 { return self.offset_y; }
+    pub fn get_offset_y(&self) -> f64 { return self.offset_y; }
+    #[allow(unused)]
+    pub fn new(x: f64, y: f64) -> MouseScrolledEvent {
+        return MouseScrolledEvent {
+            event_category: EventCategory::MOUSE | EventCategory::INPUT,
+            event_type: EventAction::MOUSESCROLLED,
+            offset_x: x,
+            offset_y: y,
+            handled: false
+        }
+    }
 }
 crate::INTERN_EVENT_IMPLEMENT!(MouseScrolledEvent);
 
@@ -88,20 +108,35 @@ pub struct MouseKeyPressedEvent {
     event_type: EventAction,
     key_code: u32,
     #[allow(unused)]
+    repeat_count: u32,
+    #[allow(unused)]
     handled: bool
 }
 impl Default for MouseKeyPressedEvent {
     fn default() -> MouseKeyPressedEvent {
         return MouseKeyPressedEvent {
             event_category: EventCategory::MOUSEKEY | EventCategory::INPUT,
-            event_type: EventAction::KEYPRESSED,
+            event_type: EventAction::MOUSEKEYPRESSED,
             key_code: 0,
+            repeat_count: 0,
             handled: false
         }
     }
 }
 impl MouseKeyEvent for MouseKeyPressedEvent {
     fn get_key_code(&self) -> u32 { return self.key_code; }
+}
+impl MouseKeyPressedEvent {
+    #[allow(unused)]
+    pub fn new(keycode: u32, repeat_count: u32) -> MouseKeyPressedEvent {
+        return MouseKeyPressedEvent {
+            event_category: EventCategory::MOUSEKEY | EventCategory::INPUT,
+            event_type: EventAction::MOUSEKEYPRESSED,
+            key_code: keycode,
+            repeat_count: repeat_count,
+            handled: false
+        }
+    }
 }
 crate::INTERN_EVENT_IMPLEMENT!(MouseKeyPressedEvent);
 
@@ -119,7 +154,7 @@ impl Default for MouseKeyReleasedEvent {
     fn default() -> MouseKeyReleasedEvent {
         return MouseKeyReleasedEvent {
             event_category: EventCategory::MOUSEKEY | EventCategory::INPUT,
-            event_type: EventAction::KEYRELEASED,
+            event_type: EventAction::MOUSEKEYRELEASED,
             key_code: 0,
             handled: false
         }
@@ -127,5 +162,16 @@ impl Default for MouseKeyReleasedEvent {
 }
 impl MouseKeyEvent for MouseKeyReleasedEvent {
     fn get_key_code(&self) -> u32 { return self.key_code; }
+}
+impl MouseKeyReleasedEvent {
+    #[allow(unused)]
+    pub fn new(keycode: u32) -> MouseKeyReleasedEvent {
+        return MouseKeyReleasedEvent {
+            event_category: EventCategory::MOUSEKEY | EventCategory::INPUT,
+            event_type: EventAction::MOUSEKEYRELEASED,
+            key_code: keycode,
+            handled: false
+        }
+    }
 }
 crate::INTERN_EVENT_IMPLEMENT!(MouseKeyReleasedEvent);

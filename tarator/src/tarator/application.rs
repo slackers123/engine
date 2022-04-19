@@ -5,12 +5,14 @@
 use crate::tarator::{
     window::{WindowProps, Window},
     layer::*,
-    core::SPtr
+    core::SPtr,
+    event::Event
 };
 pub trait Application<TWindow> where
     TWindow: Window{
     fn new(window_props: &WindowProps) -> Self;
     fn run(&mut self);
+    fn event(&self, event: &dyn Event);
     fn push_layer(&mut self, layer: SPtr<dyn Layer>);
     fn push_overlay(&mut self, layer: SPtr<dyn Layer>);
 }
