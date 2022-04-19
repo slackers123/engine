@@ -24,7 +24,6 @@ pub enum BoolOp {// types of boolean operations
 
 #[derive(Debug, Clone)]
 pub enum AstNode {
-    Definitions(Vec<AstNode>), // The value is the array of type Definition or Import
     Definition{
         target: String,
         value: String,
@@ -236,7 +235,6 @@ fn parse_condition(cond: Pair<Rule>) -> AstNode {
         }
         _=> panic!("unknown")
     }
-    todo!();
 }
 
 fn parse_bool_expr(expr: Pair<Rule>) -> AstNode {
@@ -453,7 +451,7 @@ fn parse_fn_ret_ty(func: Pair<Rule>) -> Option<String> {
 fn parse_fn_args(func: Pair<Rule>) -> Option<Vec<AstNode>> {
     let mut args = vec![];
 
-    let mut inner = func.into_inner();
+    let inner = func.into_inner();
 
     for arg in inner {
         args.push(AstNode::Arg{
