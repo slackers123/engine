@@ -39,12 +39,12 @@ impl Default for KeyPressedEvent {
 }
 impl KeyPressedEvent {
     #[allow(unused)]
-    pub fn new(keycode: u32) -> KeyPressedEvent {
+    pub fn new(keycode: u32, repeat_count: u32) -> KeyPressedEvent {
         return KeyPressedEvent {
             event_category: EventCategory::KEYBOARD | EventCategory::INPUT,
             event_type: EventAction::KEYPRESSED,
             key_code: keycode,
-            repeat_count: 0,
+            repeat_count: repeat_count,
             handled: false
         };
     }
@@ -113,5 +113,16 @@ impl Default for KeyTypedEvent {
 }
 impl KeyEvent for KeyTypedEvent {
     fn get_key_code(&self) -> u32 { return self.key_code; }
+}
+impl KeyTypedEvent {
+    #[allow(unused)]
+    pub fn new(keycode: u32) -> KeyTypedEvent {
+        return KeyTypedEvent {
+            event_category: EventCategory::KEYBOARD | EventCategory::INPUT,
+            event_type: EventAction::KEYTYPED,
+            key_code: keycode,
+            handled: false
+        }
+    }
 }
 crate::INTERN_EVENT_IMPLEMENT!(KeyTypedEvent);

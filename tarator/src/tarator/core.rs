@@ -43,6 +43,15 @@ macro_rules! CAST {
         $arg.as_any().downcast_ref::<$label>().expect("CAST FAILED!");
     };
 }
+#[macro_export]
+macro_rules! TR_ASSERT {
+    ($arg:expr, $($message:tt)*) => {
+        if $arg == 0 {
+            TR_ERROR!("Assertion Failed: {}", $($message)*);
+            panic!();
+        }
+    };
+}
 /// # Smart Pointers
 /// Currently only implemented using std, but considering to write into own memory manager
 /// ## UPtr

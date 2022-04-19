@@ -4,3 +4,6 @@
 [submodule "vendor/env_logger"]
 	path = vendor/env_logger
 	url = https://github.com/env-logger-rs/env_logger.git
+[submodule "vendor/glfw"]
+	path = vendor/glfw
+	url = https://github.com/PistonDevelopers/glfw-rs.git

@@ -1,12 +1,16 @@
 #[macro_use]
 extern crate tarator;
 
+#[allow(unused)]
 use tarator::{
     tarator::{
         application::Application,
         window::{WindowProps}
     },
-    platform::winit::winit_window::WinitWindow
+    platform::{
+        glfw::glfw_window::GLFWWindow,
+        winit::winit_window::WinitWindow
+    }
 };
 use sandbox::SandboxApplication;
 
@@ -16,7 +20,7 @@ fn main() {
 
     //  Currently To Change Window API you have to Replace Te Generic Type Here:
     //                                     \\         //
-    let mut application: SandboxApplication<WinitWindow> = SandboxApplication::new(
+    let mut application: SandboxApplication<GLFWWindow> = SandboxApplication::new(
         &WindowProps { title: String::from("Tarator Engine"), width: 1280, height: 720 }
     );
     application.run();
