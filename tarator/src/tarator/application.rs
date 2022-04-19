@@ -38,15 +38,15 @@ macro_rules! APPLICATION_DEFAULTIMPL {
         }
         fn run(&mut self) {
             loop {
-                let event = self.window.update();
-                for layer in self.layer_stack.layers.iter() {
-                    layer.update();
-                    layer.event(event.as_ref());
-                }
-                match event.get_action() {
-                    EventAction::WINDOWCLOSE => return,
-                    _ => {}
-                }
+                // let event = self.window.update();
+                // for layer in self.layer_stack.layers.iter() {
+                //     layer.update();
+                //     layer.event(event.as_ref());
+                // }
+                // match event.get_action() {
+                //     EventAction::WINDOWCLOSE => return,
+                //     _ => {}
+                // }
             }
         }
     };

@@ -1,5 +1,5 @@
 use crate::{tarator::{
-    window::{WindowProps, Window},
+    window::*,
     event::{
         *,
         application_event::*,
@@ -47,7 +47,8 @@ pub struct WinitWindow {
     data: WinitWindowData
 }
 impl Window for WinitWindow {
-    fn update(&mut self) -> SPtr<dyn Event> {
+    /// CURRENTLY BROKEN!!!!!!!!!
+    fn update(&mut self) {
         let mut return_event: SPtr<dyn Event> = SPtr::new(ApplicationUpdateEvent::default());
         // get event from winit
         self.event_loop.run_return(|event, _target, control_flow| {
@@ -77,11 +78,12 @@ impl Window for WinitWindow {
                 _ => {}
             };
         });
-        return return_event;
     }
-    fn get_width(&self) {}
-    fn get_height(&self) {}
+    fn get_width(&self) -> u32 { return self.data.width; }
+    fn get_height(&self) -> u32 { return self.data.height; }
 
+    #[allow(unused)]
+    fn set_event_callback(&self, callback: &EventCallbackFn) {}
     #[allow(unused)]
     fn set_vsync(&mut self, enabled: bool) { self.data.vsync = enabled; }
     fn get_vsync_enabled(&self) -> bool { return self.data.vsync; }
