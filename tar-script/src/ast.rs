@@ -42,7 +42,7 @@ pub enum AstNode {
     Ident(String),
     Integer(i32),
     Bool(bool),
-    // Float(f32),
+    Float(f64),
     String(String),
     BinOp { // binary operation (operation with two arguments)
         op: BinOp, // type of operation
@@ -53,6 +53,10 @@ pub enum AstNode {
         op: BoolOp,
         lhs: Box<AstNode>, // left side of operation
         rhs: Box<AstNode>, // right side of operation
+    },
+    WhileLoop {
+        condition: Box<AstNode>,
+        block: Vec<AstNode>,
     },
     IfStmt{
         condition: Box<AstNode>,
@@ -80,7 +84,14 @@ pub enum AstNode {
     },
     // Expr(Box<AstNode>), // Can either be a calculation or a string
 }
-
+pub fn is_const(st: AstNode) -> bool {
+    match st {
+        AstNode::Integer(_) => {true}
+        AstNode::String(_) => {true}
+        AstNode::Bool(_) => {true}
+        _ => {false}
+    }
+}
 
 
 pub fn parse_to_ast(parsed: Pairs<Rule>) -> (Vec<AstNode>, HashMap<String, AstNode>){
@@ -171,12 +182,26 @@ fn parse_fn_block(func: Pair<Rule>) -> Vec<AstNode> {
             Rule::ifStmt => {
                 block.push(parse_if_stmt(j));
             }
+            Rule::whileLoop => {
+                block.push(parse_while_loop(j));
+            }
             _ => {
                 panic!("Unknown statemen: {:?}", j.as_rule());
             }
         }
     }
     return block;
+}
+
+fn parse_while_loop(lop: Pair<Rule>) -> AstNode {
+    let mut inner = lop.into_inner();
+    let condition = Box::new(parse_condition(inner.next().unwrap()));
+    let block = parse_fn_block(inner.next().unwrap());
+
+    return AstNode::WhileLoop {
+        condition,
+        block,
+    }
 }
 
 fn parse_if_stmt(stmt: Pair<Rule>) -> AstNode {
@@ -196,7 +221,6 @@ fn parse_if_stmt(stmt: Pair<Rule>) -> AstNode {
             }
             Rule::block => {
                 if cond.is_some() {
-                    println!("{}", els);
                     else_if.push(AstNode::ElseIf{
                         condition: Box::new(parse_condition(cond.clone().unwrap())),
                         block: parse_fn_block(els),
@@ -210,11 +234,15 @@ fn parse_if_stmt(stmt: Pair<Rule>) -> AstNode {
             _ => {panic!("idk")}
         }
     }
+    let mut else_if_stmt = None;
+    if else_if.len() > 0 {
+        else_if_stmt = Some(else_if);
+    }
     
     return AstNode::IfStmt {
         condition,
         block,
-        else_if_stmt: Some(else_if),
+        else_if_stmt,
         else_stmt,
     };
 }
@@ -314,7 +342,7 @@ fn parse_ret_stmt(stmt: Pair<Rule>) -> AstNode {
 
 fn parse_func_call(call: Pair<Rule>) -> AstNode {
 
-    let mut ident = "".to_owned();
+    let mut ident = String::new();
     let mut input = vec![];
 
     for p in call.into_inner() {
@@ -349,6 +377,16 @@ fn parse_expr(expr: Pair<Rule>) -> AstNode{
             let str = expr.as_str();
             let str = &str[1..str.len() - 1];
             return AstNode::String(str.to_owned());
+        }
+        Rule::bool => {
+            let str = expr.as_str();
+            if str == "true" {
+                return AstNode::Bool(true);
+            }
+            else if str == "false" {
+                return AstNode::Bool(false);
+            }
+            else {panic!("something went seriously wrong")}
         }
         Rule::Expr => {
             return parse_expr(expr.into_inner().next().unwrap());
@@ -430,6 +468,11 @@ fn parse_value(val: Pair<Rule>) -> AstNode{
         }
         Rule::int => {
             return AstNode::Integer(val.as_str().parse().unwrap());
+        }
+        Rule::float => {
+            let str = val.as_str();
+            let str = &str[0..str.len() - 1];
+            return AstNode::Float(str.parse().unwrap());
         }
         Rule::Expr => {
             return parse_expr(val);

@@ -2,12 +2,16 @@
 #use std::log;
 
 fn main() {
-    test(1, 1, 0);
+    int i = 0;
+    while (i < 10) {
+        fib(1.0f, 1.0f, 0);
+        i = i + 1;
+    }
 }
 
-fn test(a: int, b: int, d: int) {
+fn fib(a: int, b: int, d: int) {
     log(a);
-    if (d < 10) {
-        test(b, a+b, d+1);
+    if (d < 100) {
+        fib(b, a+b, d+1);
     }
 }

@@ -5,28 +5,39 @@ use std::fs;
 use serde::{Serialize, Deserialize};
 use serde_json::Result;
 
+use crate::bcasm::assemble_bc;
+use crate::ast::parse_to_ast;
+use crate::ast;
+use crate::TarParser;
+use crate::Rule;
+
+use pest::Parser;
+use pest::iterators::Pairs;
+
 const MAX_RECURSION_DEPTH: u8 = 200;
 #[non_exhaustive]
-struct BCInst;
+pub struct BCInst;
 
 impl BCInst {
-    pub const PRINT: u8             = 0x00; // 0    // prints the top val
-    pub const LOAD_CONST: u8        = 0x01; // 1    // loads a local const
-    pub const ADD: u8               = 0x02; // 0    // adds the top to numbers and pushes the result
-    pub const SUB: u8               = 0x03; // 0    // subtracts the top to numbers and pushes the result
+    pub const NOP: u8               = 0x00; // 0    // empty operation
+    pub const PRINT: u8             = 0x01; // 0    // prints the top val
+    pub const LOAD_CONST: u8        = 0x02; // 1    // loads a local const
+    pub const ADD: u8               = 0x03; // 0    // adds the top to numbers and pushes the result
+    pub const SUB: u8               = 0x04; // 0    // subtracts the top two numbers and pushes the result
+    pub const MUL: u8               = 0x05; // 0    // multiplies the top two numbers
+    pub const DIV: u8               = 0x06; // 0    // multiplies the top two numbers
     pub const EQUAL: u8             = 0x07; // 0    // checks if the last two values are qual
     pub const GREATER_THAN: u8      = 0x08; // 0    // checks if the second to top value is greater than the top value and pushes the result
     pub const LESS_THAN: u8         = 0x09; // 0    // checks if the second to top value is less than the top value and pushes the result
     pub const OR: u8                = 0x0a; // 0    // the last two values have to be bools; ors the last two vals and pushes the result
     pub const AND: u8               = 0x0b; // 0    // the last two values have to be bools; ands the last two vals and pushes the result
     pub const NOT: u8               = 0x0c; // 0    // the last val has to be a bool; inverts the last val on the stack
-    pub const STORE_LOCAL_VAL: u8   = 0x04; // 1    // stores the top val in the local env
-    pub const LOAD_LOCAL_VAL: u8    = 0x05; // 1    // pushes the specified local env val
-    pub const CALL_FUNC: u8         = 0x06; // 0    // has to be called after the function args have been pushed onto the stack; calls function named ontop of the stack
+    pub const STORE_LOCAL_VAL: u8   = 0x0d; // 1    // stores the top val in the local env
+    pub const LOAD_LOCAL_VAL: u8    = 0x0e; // 1    // pushes the specified local env val
+    pub const CALL_FUNC: u8         = 0x0f; // 0    // has to be called after the function args have been pushed onto the stack; calls function named ontop of the stack
     pub const JUMP: u8              = 0x10; // 2-?  // jumps to the value specified; all jumps: 1st word is 0 -> jump forward; first word is 1 -> jump backward; second word: how many bytes follow (these encode the actual distance can be 1 2 4 or 8)
-    pub const JUMP_IF_TRUE: u8      = 0x0d; // 2-?  // jumps by the amount specified if the top value on the stack is true
-    pub const JUMP_IF_FALSE: u8     = 0x0e; // 2-?  // jumps by the amount specified if the top value on the stack is false
-    pub const NOP: u8               = 0x0f; // 0    // empty operation
+    pub const JUMP_IF_TRUE: u8      = 0x11; // 2-?  // jumps by the amount specified if the top value on the stack is true
+    pub const JUMP_IF_FALSE: u8     = 0x12; // 2-?  // jumps by the amount specified if the top value on the stack is false
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -59,20 +70,53 @@ fn print_val(val: Val) {
 }
 
 #[allow(unused)]
-pub fn store_bc(path: String, funcs: HashMap<String, (Vec<u8>, Vec<Val>)>, stack: Vec<Val>, entry: String) {
-    let j = serde_json::to_string(&(funcs.clone(), stack.clone(), "main".to_owned())).unwrap();
+pub fn run_file_checked(path: &str) -> Result<()> {
+    if !(&path[path.len()-3..path.len()] == "tar") {panic!()}
 
-    fs::write(path, j).unwrap();
-}
+    let program = fs::read_to_string(path).unwrap();
+    let mut path = (&path[0..path.len() - 3] as &str).to_owned();
+    path.push_str("lock");
+    let lock = fs::read_to_string(path).unwrap();
 
-pub fn run_from_string(string: String) -> Result<()> {
-    let (funcs, mut stack, entry): (HashMap<String, (Vec<u8>, Vec<Val>)>, Vec<Val>, String) = serde_json::from_str(string.as_str())?;
+    let hash1 = format!("{:x}", md5::compute(program.clone())).to_owned();
 
-    run_func(entry, &funcs, &mut stack, 0);
+    let (funcs, mut stack, entry, hash2): (HashMap<String, (Vec<u8>, Vec<Val>)>, Vec<Val>, Option<String>, String) = serde_json::from_str(lock.as_str())?;
+
+    if hash1 == hash2 {
+        if entry.is_some() {
+            run_func(entry.unwrap(), &funcs, &mut stack, 0);
+        }
+    }
+    else {    
+        let pairs: Pairs<Rule> = TarParser::parse(Rule::Program, program.as_str()).unwrap();
+        let (defs, funcs): (Vec<ast::AstNode>, HashMap<String, ast::AstNode>) = parse_to_ast(pairs);
+        let (funcs, mut stack, entry) = assemble_bc(defs, funcs);
+
+        if entry.is_some() {
+            run_func(entry.unwrap(), &funcs, &mut stack, 0);
+        }
+    }
 
     return Ok(());
 }
 
+#[allow(unused)]
+pub fn store_bc(path: String, funcs: HashMap<String, (Vec<u8>, Vec<Val>)>, stack: Vec<Val>, entry: Option<String>, hash: String) {
+    let j = serde_json::to_string(&(funcs.clone(), stack.clone(), entry, hash)).unwrap();
+
+    fs::write(path, j).unwrap();
+}
+
+#[allow(unused)]
+pub fn run_from_string(string: String) -> Result<()> {
+    let (funcs, mut stack, entry, hash): (HashMap<String, (Vec<u8>, Vec<Val>)>, Vec<Val>, Option<String>, String) = serde_json::from_str(string.as_str())?;
+
+    run_func(entry.unwrap(), &funcs, &mut stack, 0);
+
+    return Ok(());
+}
+
+#[allow(unused)]
 pub fn run_func(name: String, funcs: &HashMap<String, (Vec<u8>, Vec<Val>)>, stack: &mut Vec<Val>, d: u8) {
     let d = d+1;
     if d > MAX_RECURSION_DEPTH {
@@ -140,8 +184,8 @@ pub fn run_func(name: String, funcs: &HashMap<String, (Vec<u8>, Vec<Val>)>, stac
                 }
             }
             BCInst::SUB => {
-                let val1 = stack.pop().expect("not enough vals on stack for subtraction op.");
                 let val2 = stack.pop().expect("not enough vals on stack for subtraction op.");
+                let val1 = stack.pop().expect("not enough vals on stack for subtraction op.");
 
                 match val1 {
                     Val::Int(v) => {
@@ -165,6 +209,90 @@ pub fn run_func(name: String, funcs: &HashMap<String, (Vec<u8>, Vec<Val>)>, stac
                     Val::Float(v) => {
                         if let Val::Float(v1) = val2 {
                             stack.push(Val::Float(v - v1));
+                        }
+                        else {
+                            panic!("can only add the same types");
+                        }
+                    }
+
+                    Val::String(_) => {
+                        panic!("cannot perform subtraction on strings");
+                    }
+
+                    Val::Bool(_) => {
+                        panic!("cannot subtract bools");
+                    }
+                }
+            }
+
+            BCInst::MUL => {
+                let val1 = stack.pop().expect("not enough vals on stack for subtraction op.");
+                let val2 = stack.pop().expect("not enough vals on stack for subtraction op.");
+
+                match val1 {
+                    Val::Int(v) => {
+                        if let Val::Int(v1) = val2 {
+                            stack.push(Val::Int(v.checked_mul(v1).expect("multiplication with overflow")));
+                        }
+                        else {
+                            panic!("can only add the same types");
+                        }
+                    }
+
+                    Val::Long(v) => {
+                        if let Val::Long(v1) = val2 {
+                            stack.push(Val::Long(v.checked_mul(v1).expect("multiplication with overflow")));
+                        }
+                        else {
+                            panic!("can only add the same types");
+                        }
+                    }
+
+                    Val::Float(v) => {
+                        if let Val::Float(v1) = val2 {
+                            stack.push(Val::Float(v * v1));
+                        }
+                        else {
+                            panic!("can only add the same types");
+                        }
+                    }
+
+                    Val::String(_) => {
+                        panic!("cannot perform subtraction on strings");
+                    }
+
+                    Val::Bool(_) => {
+                        panic!("cannot subtract bools");
+                    }
+                }
+            }
+
+            BCInst::DIV => {
+                let val2 = stack.pop().expect("not enough vals on stack for subtraction op.");
+                let val1 = stack.pop().expect("not enough vals on stack for subtraction op.");
+
+                match val1 {
+                    Val::Int(v) => {
+                        if let Val::Int(v1) = val2 {
+                            stack.push(Val::Int(v.checked_div(v1).expect("multiplication with overflow")));
+                        }
+                        else {
+                            panic!("can only add the same types");
+                        }
+                    }
+
+                    Val::Long(v) => {
+                        if let Val::Long(v1) = val2 {
+                            stack.push(Val::Long(v.checked_div(v1).expect("multiplication with overflow")));
+                        }
+                        else {
+                            panic!("can only add the same types");
+                        }
+                    }
+
+                    Val::Float(v) => {
+                        if let Val::Float(v1) = val2 {
+                            stack.push(Val::Float(v / v1));
                         }
                         else {
                             panic!("can only add the same types");
@@ -405,10 +533,10 @@ pub fn run_func(name: String, funcs: &HashMap<String, (Vec<u8>, Vec<Val>)>, stac
                     let (dist, len, go_fwd) = get_jump_dist(&func, i);
                     if !v {
                         if go_fwd {
-                            i += dist;
+                            i += dist+1;
                         }
                         else {
-                            i-= dist;
+                            i-= dist+1;
                         }
                     }
                     else {
@@ -427,7 +555,7 @@ pub fn run_func(name: String, funcs: &HashMap<String, (Vec<u8>, Vec<Val>)>, stac
                     i += dist;
                 }
                 else {
-                    i-= dist+1;
+                    i -= dist+1;
                 }
             }
 

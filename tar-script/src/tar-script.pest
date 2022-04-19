@@ -20,9 +20,12 @@ block = {
       | funcCall
       | valAssign
       | ifStmt
+      | whileLoop
     )*
      ~ returnStmt?
 }
+
+whileLoop =  { "while" ~ "(" ~ condition ~ ")" ~ "{" ~ block ~ "}" }
 
 ifStmt =    { "if" ~ "(" ~ condition ~ ")" ~ "{" ~ block ~ "}" ~
              ("else" ~ "if" ~ "(" ~ condition ~ ")" ~ "{" ~ block ~ "}")* ~
@@ -38,16 +41,16 @@ valAssign = 	 { ident ~ "=" ~ Expr ~ EOS }
 
 decl = 	         { Type ~ ident ~ "=" ~ Expr ~ EOS }
 
-funcCall = 		 { ident ~ "(" ~ (Expr ~ ",")* ~ Expr? ~ ")" ~ EOS }
+funcCall = 		  { ident ~ "(" ~ (Expr ~ ",")* ~ Expr? ~ ")" ~ EOS }
 innerFuncCall = { ident ~ "(" ~ (Expr ~ ",")* ~ Expr? ~ ")" }
 
-Expr =           { Sum | string }
+Expr =           { bool | Sum | string }
 
 Sum =            { Product ~ ((plus | minus) ~ Product)* }
 
 Product =        { Value ~ ((mul | div) ~ Value)* }
 
-Value =          _{ int | innerFuncCall | ident | "(" ~ Expr ~ ")" }
+Value =          _{ float | int | innerFuncCall | ident | "(" ~ Expr ~ ")" }
 
 boolOp =        _{ equal | greaterThan | lessThan | greaterThanEqual | lessThanEqual }
 
@@ -69,12 +72,14 @@ int = 			@{ ASCII_DIGIT+ }
 
 string = 		@{ "\"" ~ ( (!"\"" ~ ANY) )* ~ "\"" }
 
+float =     @{ ASCII_DIGIT+ ~ "." ~ ASCII_DIGIT+ ~ "f" }
+
 bool =      @{"true" | "false"}
 
 args = 			 { arg ~ ("," ~ arg)* }
 
 arg = 			 { ident ~ ":" ~ Type }
 
-ident = 		@{ ASCII_ALPHA ~ (ASCII_ALPHANUMERIC | "_" | "." )* }
+ident = 		@{ ASCII_ALPHA ~ (ASCII_ALPHANUMERIC | "_")* }
 
-Type = 			 { "int" | "string" }
+Type = 			 { "int" | "string" | "float" | "bool" }
