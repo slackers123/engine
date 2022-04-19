@@ -1,32 +1,38 @@
 mod ast;
 mod astint;
 mod bcvm;
+mod bcasm;
 
 extern crate pest;
 #[macro_use]
 extern crate pest_derive;
 extern crate core;
-
-use pest::Parser;
-use pest::iterators::Pairs;
-
-use std::fs;
+use std::env;
 
 #[derive(Parser)]
 #[grammar = "tar-script.pest"]
 pub struct TarParser;
 
 fn main() {
-    let program = fs::read_to_string("C:/Users/wowwi/rust/engine/tar-script/src/main.tar").unwrap();
+    let args: Vec<String> = env::args().collect();
 
-    let pairs: Pairs<Rule> = TarParser::parse(Rule::Program, program.as_str()).unwrap();
+    bcvm::run_file_checked(args[1].as_str()).unwrap();
 
-    #[allow(unused)]
-    let (defs, funcs) = ast::parse_to_ast(pairs);
+    // let program = fs::read_to_string(args[1].as_str()).unwrap();
 
-    let program = fs::read_to_string("tar.lock").unwrap();
+    // let hash = format!("{:x}", md5::compute(program)).to_owned();
 
-    bcvm::run_from_string(program).unwrap();
+    // let pairs: Pairs<Rule> = TarParser::parse(Rule::Program, program.as_str()).unwrap();
+
+    // let (defs, funcs) = ast::parse_to_ast(pairs);
+
+    // let (funcs, stack, entry) = bcasm::assemble_bc(defs, funcs);
+
+    // bcvm::store_bc("tar.lock".to_owned(), funcs, stack, entry, hash);
+
+    // let program = fs::read_to_string("tar.lock").unwrap();
+
+    // bcvm::run_from_string(program).unwrap();
+
+    // bcvm::run_func(entry.unwrap(), &funcs, &mut stack, 0);
 }
-
-// TODO: Parse ast -> bytecode
