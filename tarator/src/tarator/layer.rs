@@ -29,7 +29,7 @@ pub trait Layer {
 /// ## LayerStack
 /// Manages Layers
 pub struct LayerStack {
-    pub layers: Vector<SPtr<dyn Layer>>,
+    layers: Vector<SPtr<dyn Layer>>,
     index: usize
 }
 impl LayerStack {
@@ -61,5 +61,9 @@ impl LayerStack {
         if let Some(index) = self.layers.iter().position(|element| element.get_name() == name) {
             self.layers.remove(index);
         }
+    }
+    #[allow(unused)]
+    pub fn get_iter(&self) -> std::slice::Iter<SPtr<dyn Layer>> {
+        return self.layers.iter();
     }
 }

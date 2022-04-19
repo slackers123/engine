@@ -3,14 +3,14 @@
 /// Use this trait in another crate to create your application
 
 use crate::tarator::{
-    window::{WindowProps, Window},
+    window::Window,
     layer::*,
     core::SPtr,
     event::Event
 };
 pub trait Application<TWindow> where
     TWindow: Window{
-    fn new(window_props: &WindowProps) -> Self;
+    fn new() -> Self;
     fn run(&mut self);
     fn event(&self, event: &dyn Event);
     fn push_layer(&mut self, layer: SPtr<dyn Layer>);

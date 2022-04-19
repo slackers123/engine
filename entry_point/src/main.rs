@@ -20,8 +20,6 @@ fn main() {
 
     //  Currently To Change Window API you have to Replace Te Generic Type Here:
     //                                     \\         //
-    let mut application: SandboxApplication<GLFWWindow> = SandboxApplication::new(
-        &WindowProps { title: String::from("Tarator Engine"), width: 1280, height: 720 }
-    );
+    let mut application: SandboxApplication<GLFWWindow> = SandboxApplication::new();
     application.run();
 }

@@ -61,9 +61,9 @@ APPLICATION_DECLARE!(SandboxApplication);
 impl<TWindow> Application<TWindow> for SandboxApplication<TWindow> where
     TWindow: Window { APPLICATION_LAYERIMPL!(SandboxApplication);
     // RUN
-    fn new(window_props: &WindowProps) -> SandboxApplication<TWindow> {
+    fn new() -> SandboxApplication<TWindow> {
         let mut app = SandboxApplication{
-            window: UPtr::new(TWindow::new(window_props)),
+            window: UPtr::new(TWindow::new(&WindowProps::default())),
             layer_stack: UPtr::new(LayerStack::new())
         };
         app.push_layer(SPtr::new(ExampleLayer::new(String::from("Example Layer"))));
@@ -77,22 +77,21 @@ impl<TWindow> Application<TWindow> for SandboxApplication<TWindow> where
                 match event.get_action() {
                     EventAction::WINDOWCLOSE => return,
                     EventAction::APPLICATIONUPDATE => {
-                        for layer in self.layer_stack.layers.iter() {
+                        for layer in self.layer_stack.get_iter() {
                             layer.update();
                         }
                     }
                     _ => {}
-                }
+                };
             }
         }
     }
     fn event(&self, event: &dyn Event) {
-        for layer in self.layer_stack.layers.iter() {
+        for layer in self.layer_stack.get_iter() {
                layer.event(event);
                if event.get_handled() {
                    break;
                }
         }
-
     }
 }

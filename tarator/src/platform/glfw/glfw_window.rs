@@ -1,12 +1,8 @@
 extern crate glfw;
-
-#[allow(unused)]
 use crate::{
     tarator::{
-        core::{UPtr, SPtr, Vector},
-        render::render_context::RenderContext,
+        core::{UPtr, Vector},
         window::{
-            EventCallbackFn, Null,
             Window,
             WindowProps
         },
@@ -24,7 +20,6 @@ mod g {
     pub use glfw::*;
     pub use std::sync::mpsc::Receiver;
 }
-
 /// ## GLFWWindowData
 struct GLFWWindowData {
     #[allow(unused)]
@@ -58,6 +53,7 @@ impl Window for GLFWWindow {
                     return_events.push(UPtr::new(WindowCloseEvent::default()));
                 },
                 g::WindowEvent::Char(keycode) => {
+                    TR_INFO!("GLFW keycode as char to u32, NOT to TR_KEYCODE!");
                     return_events.push(UPtr::new(KeyTypedEvent::new(keycode as u32)));
                 },
                 g::WindowEvent::Key(key, keycode, action, mods) => {
@@ -114,7 +110,8 @@ impl Window for GLFWWindow {
             window_props.title.as_str(),
             glfw::WindowMode::Windowed,
         ).expect("Failed to create GLFW window.");
-        window.set_sticky_keys(true);
+        window.set_sticky_keys(false);
+        window.set_sticky_mouse_buttons(false);
         window.set_all_polling(true);
         return GLFWWindow {
             glfw: UPtr::new(glfw),
