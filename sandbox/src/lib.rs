@@ -3,8 +3,8 @@ extern crate tarator;
 use tarator::{tarator::{
     application::Application,
     window::{WindowProps, Window},
-    core::{UPtr, SPtr},
-    event::{*, key_event::{KeyEvent, KeyPressedEvent}},
+    core::{UPtr, SPtr, Vector},
+    event::{*, key_event::{KeyEvent, KeyPressedEvent}, application_event::{ApplicationUpdateEvent}},
     layer::{Layer, LayerStack}
 }};
 
@@ -30,7 +30,7 @@ impl Layer for ExampleLayer {
 
 APPLICATION_DECLARE!(SandboxApplication);
 impl<TWindow> Application<TWindow> for SandboxApplication<TWindow> where
-    TWindow: Window { APPLICATION_DEFAULTIMPL!(SandboxApplication);
+    TWindow: Window { APPLICATION_LAYERIMPL!(SandboxApplication);
     // RUN
     fn new(window_props: &WindowProps) -> SandboxApplication<TWindow> {
         let mut app = SandboxApplication{
@@ -39,5 +39,19 @@ impl<TWindow> Application<TWindow> for SandboxApplication<TWindow> where
         };
         app.push_layer(SPtr::new(ExampleLayer::new(String::from("Example Layer"))));
         return app;
+    }
+    fn run(&mut self) {
+        loop {
+            let event: Vector<UPtr<dyn Event>> = self.window.update();
+            for layer in self.layer_stack.layers.iter() {
+                layer.update();
+            }
+            for event in event {
+                match event.get_action() {
+                    EventAction::WINDOWCLOSE => return,
+                    _ => {}
+                }
+            }
+        }
     }
 }

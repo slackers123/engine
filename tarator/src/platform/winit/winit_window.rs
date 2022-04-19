@@ -5,7 +5,7 @@ use crate::{tarator::{
         application_event::*,
         key_event::*
     },
-    core::{UPtr, SPtr}},
+    core::{UPtr, SPtr, Vector}},
     platform::winit::winit_keycode::get_tr_keycode
 };
 mod w {
@@ -47,9 +47,8 @@ pub struct WinitWindow {
     data: WinitWindowData
 }
 impl Window for WinitWindow {
-    /// CURRENTLY BROKEN!!!!!!!!!
-    fn update(&mut self) {
-        let mut return_event: SPtr<dyn Event> = SPtr::new(ApplicationUpdateEvent::default());
+    fn update(&mut self) -> Vector<UPtr<dyn Event>> {
+        let mut return_events: Vector<UPtr<dyn Event>> = Vector::new();
         // get event from winit
         self.event_loop.run_return(|event, _target, control_flow| {
             *control_flow = w::ControlFlow::Exit; // we wan't to immediately exit so we can return a proper event every update loop cycle
@@ -60,7 +59,7 @@ impl Window for WinitWindow {
                 } if window_id == self.window.id() => {
                         match event {
                             w::WindowEvent::CloseRequested => {
-                                return_event = SPtr::new(WindowCloseEvent::default());
+                                return_events.push(UPtr::new(WindowCloseEvent::default()));
                             },
                             w::WindowEvent::KeyboardInput {
                                 input: w::KeyboardInput {
@@ -70,7 +69,7 @@ impl Window for WinitWindow {
                                 },
                                 ..
                             } => {
-                                return_event = SPtr::new(KeyPressedEvent::new(get_tr_keycode(keycode)));
+                                return_events.push(UPtr::new(KeyPressedEvent::new(get_tr_keycode(keycode))));
                             },
                             _ => {}
                         }
@@ -78,12 +77,13 @@ impl Window for WinitWindow {
                 _ => {}
             };
         });
+        return return_events;
     }
     fn get_width(&self) -> u32 { return self.data.width; }
     fn get_height(&self) -> u32 { return self.data.height; }
 
-    #[allow(unused)]
-    fn set_event_callback(&self, callback: &EventCallbackFn) {}
+    // #[allow(unused)]
+    // fn set_event_callback(&self, callback: &EventCallbackFn) {}
     #[allow(unused)]
     fn set_vsync(&mut self, enabled: bool) { self.data.vsync = enabled; }
     fn get_vsync_enabled(&self) -> bool { return self.data.vsync; }

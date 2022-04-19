@@ -4,6 +4,7 @@
 
 use crate::tarator::{
     event::Event,
+    core::{UPtr, Vector}
 };
 
 /// ## WindowProps
@@ -49,12 +50,12 @@ impl Null for EventCallbackFn {
 pub trait Window {
     /// ### Window::update
     /// makes all updates nececcary for window and returns event
-    fn update(&mut self);
+    fn update(&mut self) -> Vector<UPtr<dyn Event>>;
     fn get_width(&self) -> u32;
     fn get_height(&self) -> u32;
 
     // Window Attributes
-    fn set_event_callback(&self, callback: &EventCallbackFn);
+    // fn set_event_callback(&self, callback: &EventCallbackFn);
     fn set_vsync(&mut self, enabled: bool);
     fn get_vsync_enabled(&self) -> bool;
 

@@ -2,7 +2,7 @@ extern crate glfw;
 
 #[allow(unused)]
 use crate::tarator::{
-    core::{UPtr, SPtr},
+    core::{UPtr, SPtr, Vector},
     render::render_context::RenderContext,
     window::{
         EventCallbackFn, Null,
@@ -15,88 +15,72 @@ use crate::tarator::{
     }
 };
 mod g {
-    pub use glfw::{
-        Window,
-        ffi::*
-    };
+    pub extern crate glfw;
+    pub use glfw::*;
+    pub use std::sync::mpsc::Receiver;
 }
-use std::os::raw::*;
-use std::ffi::CString;
-/// GLFW UNSPECIFIC DATA
-static mut GLFWINITIALIZED: bool = false;
-extern "C" fn glfw_error_callback(error: i32, description: *const c_char) {
-    unsafe {
-        TR_ERROR!("GLFW ERROR ({}): {}", error, description.as_ref().expect("NOT UTF8!"));
-    }
-}
-/// GLFW UNSPECIFIC DATA
+
 /// ## GLFWWindowData
 struct GLFWWindowData {
     #[allow(unused)]
     title: String,
     width: u32,
     height: u32,
-    vsync: bool,
-    #[allow(unused)]
-    event_callback: EventCallbackFn
+    vsync: bool
 }
 /// ## GLFWWindow
 pub struct GLFWWindow {
-    window: *mut g::Window,
+    glfw: UPtr<g::Glfw>,
+    events: g::Receiver<(f64, g::WindowEvent)>,
+    #[allow(unused)]
+    window: UPtr<g::Window>,
     // context: &'a dyn RenderContext,
     data: GLFWWindowData
 }
 impl Window for GLFWWindow {
-    fn update(&mut self) {}
+    fn update(&mut self) -> Vector<UPtr<dyn Event>> {
+        let mut return_events: Vector<UPtr<dyn Event>> = Vector::new();
+        self.glfw.poll_events();
+        #[allow(unused)]
+        for (f, event) in g::flush_messages(&self.events) {
+            match event {
+                g::WindowEvent::Close => {
+                    return_events.push(UPtr::new(WindowCloseEvent::default()));
+                },
+                _ => ()
+            }
+        }
+        return return_events;
+    }
     fn get_width(&self) -> u32 { return self.data.width; }
     fn get_height(&self) -> u32 { return self.data.height; }
 
-    #[allow(unused)]
-    fn set_event_callback(&self, callback: &EventCallbackFn) {}
+    // #[allow(unused)]
+    // fn set_event_callback(&self, callback: &EventCallbackFn) {}
     fn set_vsync(&mut self, enabled: bool) { self.data.vsync = enabled; }
     fn get_vsync_enabled(&self) -> bool { return self.data.vsync; }
 
     fn new(window_props: &WindowProps) -> GLFWWindow {
-        unsafe {
-            if !GLFWINITIALIZED {
-                let success = g::glfwInit();
-                TR_ASSERT!(success, "Couldn't Init GLFW!");
-                g::glfwSetErrorCallback(Option::Some(glfw_error_callback));
-                GLFWINITIALIZED = true;
+        let mut glfw = g::init(g::FAIL_ON_ERRORS).unwrap();
+        glfw.window_hint(g::WindowHint::Resizable(true));
+        let (mut window, events) = glfw.create_window(
+            window_props.width,
+            window_props.height,
+            window_props.title.as_str(),
+            glfw::WindowMode::Windowed,
+        ).expect("Failed to create GLFW window.");
+        window.set_sticky_keys(true);
+        window.set_all_polling(true);
+        return GLFWWindow {
+            glfw: UPtr::new(glfw),
+            events: events,
+            window: UPtr::new(window),
+            data: GLFWWindowData {
+                title: window_props.title.clone(),
+                width: window_props.width,
+                height: window_props.height,
+                vsync: true
             }
-            let mut r_window = GLFWWindow {
-                window: g::glfwCreateWindow(
-                        window_props.width as i32,
-                        window_props.height as i32,
-                        #[allow(temporary_cstring_as_ptr)]
-                        CString::new(window_props.title.clone()).expect("CSting Failed To Create").as_ptr(),
-                        std::ptr::null_mut(),
-                        std::ptr::null_mut()
-                    ) as *mut g::Window,
-                // context: 0,
-                data: GLFWWindowData {
-                    title: window_props.title.clone(),
-                    width: window_props.width,
-                    height: window_props.height,
-                    vsync: true,
-                    event_callback: EventCallbackFn::null()
-                }
-            };
-            g::glfwSetWindowUserPointer(
-                r_window.window as *mut g::GLFWwindow,
-                &mut r_window.data as *mut _ as *mut c_void
-            );
-            r_window.set_vsync(true);
-            // EVENT SETUP:
-            // g::glfwSetWindowCloseCallback(
-            //     r_window.window  as *mut g::GLFWwindow,
-            //     Some(|window| {
-            //         let data = g::glfwGetWindowUserPointer(window as *mut g::GLFWwindow) as *mut _ as *mut GLFWWindowData;
-            //         let event: &dyn Event = &WindowCloseEvent::default();
-            //         ((&*data).event_callback)(event);
-            //     })
-            // );
-            return r_window;
-        }
+        };
     }
 }
