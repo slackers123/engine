@@ -1,4 +1,3 @@
-extern crate glfw;
 use crate::{
     tarator::{
         core::{UPtr, Vector},
@@ -15,11 +14,13 @@ use crate::{
     },
     platform::glfw::glfw_keycode::*
 };
+extern crate glfw;
 mod g {
     pub extern crate glfw;
     pub use glfw::*;
     pub use std::sync::mpsc::Receiver;
 }
+pub use glfw::Context;
 /// ## GLFWWindowData
 struct GLFWWindowData {
     #[allow(unused)]
@@ -110,9 +111,9 @@ impl Window for GLFWWindow {
             window_props.title.as_str(),
             glfw::WindowMode::Windowed,
         ).expect("Failed to create GLFW window.");
-        window.set_sticky_keys(false);
-        window.set_sticky_mouse_buttons(false);
+        window.set_sticky_keys(true);
         window.set_all_polling(true);
+        window.make_current();
         return GLFWWindow {
             glfw: UPtr::new(glfw),
             events: events,
