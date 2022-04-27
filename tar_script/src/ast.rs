@@ -1,8 +1,10 @@
 use pest::iterators::{Pair, Pairs};
+use pest::Parser;
+
 use std::collections::HashMap;
 
 use crate::Rule;
-
+use crate::TarParser;
 
 #[derive(Debug, Clone)]
 pub enum BinOp {// types of binary operations
@@ -44,6 +46,7 @@ pub enum AstNode {
     Bool(bool),
     Float(f64),
     String(String),
+    Array(Vec<AstNode>),
     BinOp { // binary operation (operation with two arguments)
         op: BinOp, // type of operation
         lhs: Box<AstNode>, // left side of operation
@@ -91,6 +94,12 @@ pub fn is_const(st: AstNode) -> bool {
         AstNode::Bool(_) => {true}
         _ => {false}
     }
+}
+
+pub fn parse_file_to_ast(file: String) -> (Vec<AstNode>, HashMap<String, AstNode>) {
+    let parsed = TarParser::parse(Rule::Program, file.as_str()).unwrap();
+
+    return parse_to_ast(parsed);
 }
 
 
@@ -391,11 +400,26 @@ fn parse_expr(expr: Pair<Rule>) -> AstNode{
         Rule::Expr => {
             return parse_expr(expr.into_inner().next().unwrap());
         }
+        Rule::array => {
+            return parse_array(expr);
+        }
 
         _ => {
             panic!("Unknown rule in expression: {:?}", expr.as_rule())
         }
     }
+}
+
+fn parse_array(arr: Pair<Rule>) -> AstNode {
+    let inner = arr.into_inner();
+
+    let mut res = vec![];
+
+    for i in inner {
+        res.push(parse_expr(i));
+    }
+
+    return AstNode::Array(res);
 }
 
 fn parse_sum(sum: Pair<Rule>) -> AstNode {

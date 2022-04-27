@@ -17,8 +17,10 @@ pub fn assemble_bc(defs: Vec<ast::AstNode>, funcs: HashMap<String, ast::AstNode>
                 }
             }
 
-            ast::AstNode::Import(_) => {
-
+            ast::AstNode::Import(path) => {
+                if path[0] == "std" {
+                    
+                }
             }
 
             _=> {println!("error: not a definition or a import")}
@@ -54,6 +56,16 @@ pub fn assemble_bc(defs: Vec<ast::AstNode>, funcs: HashMap<String, ast::AstNode>
     return (fns, vec![], entry);
 }
 
+fn push_to_consts(consts: &mut Vec<Val>, val: Val) -> usize {
+    let index = consts.iter().position(|r| *r == val);
+    if index.is_some() {
+        return index.unwrap();
+    }
+    let idx = consts.len();
+    consts.push(val);
+    return idx;
+}
+
 fn asm_block(bc: &mut Vec<u8>, consts: &mut Vec<Val>, temp_vars: &mut HashMap<String, u8>, block: Vec<ast::AstNode>) -> usize {
     let mut len = 0;
     for b in block {
@@ -65,8 +77,7 @@ fn asm_block(bc: &mut Vec<u8>, consts: &mut Vec<Val>, temp_vars: &mut HashMap<St
             ast::AstNode::IfStmt{condition, block, else_if_stmt, else_stmt} => {
                 match *condition {
                     ast::AstNode::Bool(b) => {
-                        let idx = consts.len();
-                        consts.push(Val::Bool(b));
+                        let idx = push_to_consts(consts, Val::Bool(b));
                         bc.push(BCInst::LOAD_CONST);
                         bc.push(idx as u8);
                         len += 2;
@@ -98,9 +109,9 @@ fn asm_block(bc: &mut Vec<u8>, consts: &mut Vec<Val>, temp_vars: &mut HashMap<St
                 let idx = temp_vars.len() as u8;
                 temp_vars.insert(ident, idx);
                 if ast::is_const(*val.clone()) {
-                    consts.push(get_as_val(*val));
+                    let dx = push_to_consts(consts, get_as_val(*val));
                     bc.push(BCInst::LOAD_CONST);
-                    bc.push(consts.len() as u8-1);
+                    bc.push(dx as u8);
                     len += 2;
                 }
                 else {
@@ -113,9 +124,9 @@ fn asm_block(bc: &mut Vec<u8>, consts: &mut Vec<Val>, temp_vars: &mut HashMap<St
 
             ast::AstNode::ValAssign{ident, val} => {
                 if ast::is_const(*val.clone()) {
-                    consts.push(get_as_val(*val));
+                    let idx = push_to_consts(consts, get_as_val(*val));
                     bc.push(BCInst::LOAD_CONST);
-                    bc.push(consts.len() as u8-1);
+                    bc.push(idx as u8);
                     len += 2;
                 }
                 else {
@@ -130,8 +141,7 @@ fn asm_block(bc: &mut Vec<u8>, consts: &mut Vec<Val>, temp_vars: &mut HashMap<St
                 let l1 = len;
                 match *condition {
                     ast::AstNode::Bool(b) => {
-                        let idx = consts.len();
-                        consts.push(Val::Bool(b));
+                        let idx = push_to_consts(consts, Val::Bool(b));
                         bc.push(BCInst::LOAD_CONST);
                         bc.push(idx as u8);
                         len += 2;
@@ -151,7 +161,7 @@ fn asm_block(bc: &mut Vec<u8>, consts: &mut Vec<Val>, temp_vars: &mut HashMap<St
                 let len_tmp = len - l1;
 
                 let mut nbc = bc.clone();
-                let l = asm_block(&mut nbc, &mut consts.clone(), temp_vars, block.clone()) as u64;
+                let l = asm_block(&mut nbc, &mut consts.clone(), &mut temp_vars.clone(), block.clone()) as u64;
                 bc.push(BCInst::JUMP_IF_FALSE);
                 len += asm_jmp_dist(bc, l, true, true);
                 len += asm_block(bc, consts, temp_vars, block);
@@ -171,6 +181,7 @@ fn asm_block(bc: &mut Vec<u8>, consts: &mut Vec<Val>, temp_vars: &mut HashMap<St
 }
 
 fn asm_jmp_dist(bc: &mut Vec<u8>, diff: u64, go_fwd: bool, in_while: bool) -> usize {
+    println!("diff: {}", diff);
     let mut len = 0;
     let mut diff = diff;
     let fwd = (!go_fwd as u8)<<4;
@@ -214,6 +225,7 @@ fn asm_jmp_dist(bc: &mut Vec<u8>, diff: u64, go_fwd: bool, in_while: bool) -> us
         len += 9;
     }
 
+    println!("resulting bc: {:?}", bc);
     return len;
 }
 
@@ -223,9 +235,9 @@ fn asm_func_call(bc: &mut Vec<u8>, consts: &mut Vec<Val>, temp_vars: &HashMap<St
     while i >= 0{
         if ast::is_const(args[i as usize].clone()) {
             let cnst = get_as_val(args[i as usize].clone());
-            consts.push(cnst);
+            let idx = push_to_consts(consts, cnst);
             bc.push(BCInst::LOAD_CONST);
-            bc.push(consts.len() as u8-1);
+            bc.push(idx as u8);
             len += 2;
         }
         else {
@@ -233,9 +245,9 @@ fn asm_func_call(bc: &mut Vec<u8>, consts: &mut Vec<Val>, temp_vars: &HashMap<St
         }
         i-=1;
     }
-    consts.push(Val::String(ident.clone()));
+    let idx = push_to_consts(consts, Val::String(ident.clone()));
     bc.push(BCInst::LOAD_CONST);
-    bc.push(consts.len() as u8-1);
+    bc.push(idx as u8);
     bc.push(BCInst::CALL_FUNC);
     len += 3;
 
@@ -252,24 +264,21 @@ fn asm_expr(bc: &mut Vec<u8>, consts: &mut Vec<Val>, temp_vars: &HashMap<String,
         }
 
         ast::AstNode::Integer(i) => {
-            let idx = consts.len();
-            consts.push(Val::Int(i));
+            let idx = push_to_consts(consts, Val::Int(i));
             bc.push(BCInst::LOAD_CONST);
             bc.push(idx as u8);
             len += 2;
         }
 
         ast::AstNode::Float(f) => {
-            let idx = consts.len();
-            consts.push(Val::Float(f));
+            let idx = push_to_consts(consts, Val::Float(f));
             bc.push(BCInst::LOAD_CONST);
             bc.push(idx as u8);
             len += 2;
         }
 
         ast::AstNode::String(s) => {
-            let idx = consts.len();
-            consts.push(Val::String(s));
+            let idx = push_to_consts(consts, Val::String(s));
             bc.push(BCInst::LOAD_CONST);
             bc.push(idx as u8);
             len += 2;
@@ -281,6 +290,13 @@ fn asm_expr(bc: &mut Vec<u8>, consts: &mut Vec<Val>, temp_vars: &HashMap<String,
 
         ast::AstNode::FuncCall{ident, args} => {
             len += asm_func_call(bc, consts, temp_vars, ident, args);
+        }
+
+        ast::AstNode::Array(arr) => {
+            let idx = push_to_consts(consts, get_as_val(ast::AstNode::Array(arr)));
+            bc.push(BCInst::LOAD_CONST);
+            bc.push(idx as u8);
+            len += 2;
         }
 
         _ => {panic!("not supported: {:?}", expr);}
@@ -341,6 +357,13 @@ fn get_as_val(ast: ast::AstNode) -> Val {
         }
         ast::AstNode::Bool(b) => {
             return Val::Bool(b);
+        }
+        ast::AstNode::Array(arr) => {
+            let mut res = vec![];
+            for a in arr {
+                res.push(get_as_val(a));
+            }
+            return Val::Array(res);
         }
 
         _ => {panic!("not a valid value")}

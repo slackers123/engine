@@ -1,0 +1,16 @@
+#def entry = main;
+#use std::log;
+#use std::lists::{push};
+
+fn main() {
+    float a = 1.0f;
+    float b = 1.0f;
+    int i = 0;
+    while (i < 1000) {
+        log(a);
+        float tmp = a;
+        a = a + b;
+        b = tmp;
+        i = i + 1;
+    }
+}
