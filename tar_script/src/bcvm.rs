@@ -19,28 +19,56 @@ const MAX_RECURSION_DEPTH: u8 = 200;
 pub struct BCInst;
 
 impl BCInst {
-    pub const NOP: u8               = 0x00; // 0    // empty operation
-    pub const PRINT: u8             = 0x01; // 0    // stack: [..., value] prints the top val
-    pub const LOAD_CONST: u8        = 0x02; // 1    // loads a local const
-    pub const ADD: u8               = 0x03; // 0    // stack: [..., value1, value2] adds the top to numbers and pushes the result
-    pub const SUB: u8               = 0x04; // 0    // stack: [..., value1, value2] subtracts the top two numbers and pushes the result
-    pub const MUL: u8               = 0x05; // 0    // stack: [..., value1, value2] multiplies the top two numbers
-    pub const DIV: u8               = 0x06; // 0    // stack: [..., value1, value2] multiplies the top two numbers
-    pub const EQUAL: u8             = 0x07; // 0    // stack: [..., value1, value2] checks if the last two values are qual
-    pub const GREATER_THAN: u8      = 0x08; // 0    // stack: [..., greater, lesser] checks if the second to top value is greater than the top value and pushes the result
-    pub const LESS_THAN: u8         = 0x09; // 0    // stack: [..., lesser, greater] checks if the second to top value is less than the top value and pushes the result
-    pub const OR: u8                = 0x0a; // 0    // stack: [..., value1, value2] the last two values have to be bools; ors the last two vals and pushes the result
-    pub const AND: u8               = 0x0b; // 0    // stack: [..., value1, value2] the last two values have to be bools; ands the last two vals and pushes the result
-    pub const NOT: u8               = 0x0c; // 0    // stack: [..., value1] the last val has to be a bool; inverts the last val on the stack
-    pub const STORE_LOCAL_VAL: u8   = 0x0d; // 1    // stack: [..., value1] stores the top val in the local env
-    pub const LOAD_LOCAL_VAL: u8    = 0x0e; // 1    // pushes the specified local env val
-    pub const CALL_FUNC: u8         = 0x0f; // 0    // stack: [..., arg1, arg2, ..., func name] has to be called after the function args have been pushed onto the stack; calls function named ontop of the stack
-    pub const JUMP: u8              = 0x10; // 2-?  // jumps to the value specified; all jumps: 1st word is 0 -> jump forward; first word is 1 -> jump backward; second word: how many bytes follow (these encode the actual distance can be 1 2 4 or 8)
-    pub const JUMP_IF_TRUE: u8      = 0x11; // 2-?  // jumps by the amount specified if the top value on the stack is true
-    pub const JUMP_IF_FALSE: u8     = 0x12; // 2-?  // jumps by the amount specified if the top value on the stack is false
-    pub const LOAD_ARR_AT: u8       = 0x13; // 0    // stack: [..., array, index, new value] inserts the new value at the index into th earray (out of bounds exception)
-    pub const EXTEND_ARR_BY: u8     = 0x14; // 0    // stack: [..., array, amount] extends the array by a certain amount
-    pub const LOAD_ARR_LEN: u8      = 0x15; // 0    // stack: [..., array] loads the length of a value onto the stack
+    /// empty operation
+    pub const NOP: u8               = 0x00; // 0    
+    /// stack: [..., value] prints the top val
+    pub const PRINT: u8             = 0x01; // 0    
+    /// loads a local const
+    pub const LOAD_CONST: u8        = 0x02; // 1    
+    /// stack: [..., value1, value2] adds the top to numbers and pushes the result
+    pub const ADD: u8               = 0x03; // 0    
+    /// stack: [..., value1, value2] subtracts the top two numbers and pushes the result
+    pub const SUB: u8               = 0x04; // 0    
+    /// stack: [..., value1, value2] multiplies the top two numbers
+    pub const MUL: u8               = 0x05; // 0    
+    /// stack: [..., value1, value2] multiplies the top two numbers
+    pub const DIV: u8               = 0x06; // 0    
+    /// stack: [..., value1, value2] checks if the last two values are qual
+    pub const EQUAL: u8             = 0x07; // 0    
+    // stack: [..., greater, lesser] checks if the second to top value is greater than the top value and pushes the result
+    pub const GREATER_THAN: u8      = 0x08; // 0    
+    /// stack: [..., lesser, greater] checks if the second to top value is less than the top value and pushes the result
+    pub const LESS_THAN: u8         = 0x09; // 0    
+    /// stack: [..., value1, value2] the last two values have to be bools; ors the last two vals and pushes the result
+    pub const OR: u8                = 0x0a; // 0    
+    /// stack: [..., value1, value2] the last two values have to be bools; ands the last two vals and pushes the result
+    pub const AND: u8               = 0x0b; // 0    
+    /// stack: [..., value1] the last val has to be a bool; inverts the last val on the stack
+    pub const NOT: u8               = 0x0c; // 0    
+    /// stack: [..., value1] stores the top val in the local env
+    pub const STORE_LOCAL_VAL: u8   = 0x0d; // 1    
+    /// pushes the specified local env val
+    pub const LOAD_LOCAL_VAL: u8    = 0x0e; // 1    
+    /// stack: [..., arg1, arg2, ..., func name] has to be called after the function args have been pushed onto the stack; calls function named ontop of the stack
+    pub const CALL_FUNC: u8         = 0x0f; // 0    
+    /// jumps to the value specified; all jumps: 1st word is 0 -> jump forward; first word is 1 -> jump backward; second word: how many bytes follow (these encode the actual distance can be 1 2 4 or 8)
+    pub const JUMP: u8              = 0x10; // 2-?  
+    /// jumps by the amount specified if the top value on the stack is true
+    pub const JUMP_IF_TRUE: u8      = 0x11; // 2-?  
+    /// jumps by the amount specified if the top value on the stack is false
+    pub const JUMP_IF_FALSE: u8     = 0x12; // 2-?  
+    /// stack: [..., array, index, new value] inserts the new value at the index into the array (out of bounds exception)
+    pub const INSERT_ARR_AT: u8     = 0x13; // 0
+    /// stack: [..., array, index] gets the new value at the index into the array (out of bounds exception)
+    pub const GET_ARR_AT: u8        = 0x14; // 0
+    /// stack: [..., array, value] pushes the value onto the array
+    pub const PUSH_TO_ARR: u8       = 0x15; // 0    
+    /// stack: [..., array] gets the value from an array
+    pub const POP_FROM_ARR: u8      = 0x16; // 0    
+    /// stack: [..., array] loads the length of a value onto the stack
+    pub const LOAD_ARR_LEN: u8      = 0x17; // 0
+    /// returns from a function 
+    pub const RET: u8               = 0x18; // 0
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, std::cmp::PartialEq)]
@@ -50,7 +78,20 @@ pub enum Val {
     Float(f64),
     String(String),
     Bool(bool),
-    Array(Vec<Val>)
+    Array{
+        ty: Type,
+        arr: Vec<Val>
+    }
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, std::cmp::PartialEq)]
+pub enum Type {
+    Int,
+    Long,
+    Float,
+    String,
+    Bool,
+    Array,
 }
 
 fn print_val(val: Val) {
@@ -70,9 +111,9 @@ fn print_val(val: Val) {
         Val::Bool(v) => {
             println!("{}", v);
         }
-        Val::Array(v) => {
+        Val::Array{ty, arr} => {
             print!("[");
-            for i in v {
+            for i in arr {
                 print_val_nl(i);
                 print!(", ");
             }
@@ -99,9 +140,9 @@ fn print_val_nl(val: Val) {
         Val::Bool(v) => {
             print!("{}", v);
         }
-        Val::Array(v) => {
+        Val::Array{ty, arr} => {
             print!("[");
-            for i in v {
+            for i in arr {
                 print_val_nl(i);
                 print!(", ");
             }
@@ -182,7 +223,7 @@ pub fn run_func(name: String, funcs: &HashMap<String, (Vec<u8>, Vec<Val>)>, stac
 
     let mut i: usize = 0;
     while i < func.len() {
-        // println!("fn: {} i: {}", func[i], i);
+        println!("fn: {} i: {}", func[i], i);
         match func[i] {
             BCInst::PRINT => {
                 print_val(stack.pop().expect("missing val on stack for print operation"))
@@ -219,7 +260,7 @@ pub fn run_func(name: String, funcs: &HashMap<String, (Vec<u8>, Vec<Val>)>, stac
                                 panic!("cannot add bool to int");
                             }
 
-                            Val::Array(_) => {
+                            Val::Array{ty: _, arr: _} => {
                                 panic!("cannot add array to int")
                             }
                         }
@@ -248,7 +289,7 @@ pub fn run_func(name: String, funcs: &HashMap<String, (Vec<u8>, Vec<Val>)>, stac
                                 panic!("cannot add bool to long");
                             }
 
-                            Val::Array(_) => {
+                            Val::Array{ty: _, arr: _} => {
                                 panic!("cannot add array to long")
                             }
                         }
@@ -277,7 +318,7 @@ pub fn run_func(name: String, funcs: &HashMap<String, (Vec<u8>, Vec<Val>)>, stac
                                 panic!("cannot add bool to float");
                             }
 
-                            Val::Array(_) => {
+                            Val::Array{ty: _, arr: _} => {
                                 panic!("cannot add array to float")
                             }
                         }
@@ -300,7 +341,7 @@ pub fn run_func(name: String, funcs: &HashMap<String, (Vec<u8>, Vec<Val>)>, stac
                             Val::Long(v1) => {
                                 stack.push(Val::String(format!("{}{}", v, v1)));
                             }
-                            Val::Array(_) => {
+                            Val::Array{ty: _, arr: _} => {
                                 panic!("cannot add array to string")
                             }
                         }
@@ -310,7 +351,7 @@ pub fn run_func(name: String, funcs: &HashMap<String, (Vec<u8>, Vec<Val>)>, stac
                         panic!("cannot add bools");
                     }
 
-                    Val::Array(_) => {
+                    Val::Array{ty: _, arr: _} => {
                         panic!("cannot add arrays");
                     }
                 }
@@ -343,7 +384,7 @@ pub fn run_func(name: String, funcs: &HashMap<String, (Vec<u8>, Vec<Val>)>, stac
                                 panic!("cannot subtract bool from int");
                             }
 
-                            Val::Array(_) => {
+                            Val::Array{ty: _, arr: _} => {
                                 panic!("cannot subtract array from int")
                             }
                         }
@@ -371,7 +412,7 @@ pub fn run_func(name: String, funcs: &HashMap<String, (Vec<u8>, Vec<Val>)>, stac
                                 panic!("cannot subtract bool from long");
                             }
 
-                            Val::Array(_) => {
+                            Val::Array{ty: _, arr: _} => {
                                 panic!("cannot subtract array from long")
                             }
                         }
@@ -399,7 +440,7 @@ pub fn run_func(name: String, funcs: &HashMap<String, (Vec<u8>, Vec<Val>)>, stac
                                 panic!("cannot subtract bool from float");
                             }
 
-                            Val::Array(_) => {
+                            Val::Array{ty: _, arr: _} => {
                                 panic!("cannot subtract array from float")
                             }
                         }
@@ -413,15 +454,15 @@ pub fn run_func(name: String, funcs: &HashMap<String, (Vec<u8>, Vec<Val>)>, stac
                         panic!("cannot subtract bools");
                     }
 
-                    Val::Array(_) => {
+                    Val::Array{ty: _, arr: _} => {
                         panic!("cannot subtract arrays")
                     }
                 }
             }
 
             BCInst::MUL => {
-                let val1 = stack.pop().expect("not enough vals on stack for subtraction op.");
-                let val2 = stack.pop().expect("not enough vals on stack for subtraction op.");
+                let val1 = stack.pop().expect("not enough vals on stack for multiplication op.");
+                let val2 = stack.pop().expect("not enough vals on stack for multiplication op.");
 
                 match val1 {
                     Val::Int(v) => {
@@ -446,7 +487,7 @@ pub fn run_func(name: String, funcs: &HashMap<String, (Vec<u8>, Vec<Val>)>, stac
                                 panic!("cannot multiply bool and int");
                             }
 
-                            Val::Array(_) => {
+                            Val::Array{ty: _, arr: _} => {
                                 panic!("cannot multiply array and int")
                             }
                         }
@@ -474,7 +515,7 @@ pub fn run_func(name: String, funcs: &HashMap<String, (Vec<u8>, Vec<Val>)>, stac
                                 panic!("cannot multiply bool and long");
                             }
 
-                            Val::Array(_) => {
+                            Val::Array{ty: _, arr: _} => {
                                 panic!("cannot multiply array and long")
                             }
                         }
@@ -502,7 +543,7 @@ pub fn run_func(name: String, funcs: &HashMap<String, (Vec<u8>, Vec<Val>)>, stac
                                 panic!("cannot multiply bool and float");
                             }
 
-                            Val::Array(_) => {
+                            Val::Array{ty: _, arr: _} => {
                                 panic!("cannot multiply array and float")
                             }
                         }
@@ -516,7 +557,7 @@ pub fn run_func(name: String, funcs: &HashMap<String, (Vec<u8>, Vec<Val>)>, stac
                         panic!("cannot multiply bools");
                     }
 
-                    Val::Array(_) => {
+                    Val::Array{ty: _, arr: _} => {
                         panic!("cannot multiply arrays")
                     }
                 }
@@ -549,7 +590,7 @@ pub fn run_func(name: String, funcs: &HashMap<String, (Vec<u8>, Vec<Val>)>, stac
                                 panic!("cannot devide bool and int");
                             }
 
-                            Val::Array(_) => {
+                            Val::Array{ty: _, arr: _} => {
                                 panic!("cannot devide array and int")
                             }
                         }
@@ -577,7 +618,7 @@ pub fn run_func(name: String, funcs: &HashMap<String, (Vec<u8>, Vec<Val>)>, stac
                                 panic!("cannot devide bool and long");
                             }
 
-                            Val::Array(_) => {
+                            Val::Array{ty: _, arr: _} => {
                                 panic!("cannot devide array and long")
                             }
                         }
@@ -605,7 +646,7 @@ pub fn run_func(name: String, funcs: &HashMap<String, (Vec<u8>, Vec<Val>)>, stac
                                 panic!("cannot devide bool and float");
                             }
 
-                            Val::Array(_) => {
+                            Val::Array{ty: _, arr: _} => {
                                 panic!("cannot devide array and float")
                             }
                         }
@@ -619,7 +660,7 @@ pub fn run_func(name: String, funcs: &HashMap<String, (Vec<u8>, Vec<Val>)>, stac
                         panic!("cannot devide bools");
                     }
 
-                    Val::Array(_) => {
+                    Val::Array{ty: _, arr: _} => {
                         panic!("cannot devide arrays")
                     }
                 }
@@ -707,9 +748,9 @@ pub fn run_func(name: String, funcs: &HashMap<String, (Vec<u8>, Vec<Val>)>, stac
                         }
                     }
 
-                    Val::Array(v) => {
-                        if let Val::Array(v1) = val2 {
-                            stack.push(Val::Bool(v == v1));
+                    Val::Array{ty: _, arr} => {
+                        if let Val::Array{ty: _, arr: arr1} = val2 {
+                            stack.push(Val::Bool(arr == arr1));
                         }
                         else {
                             panic!("can only add the same types");
@@ -758,7 +799,7 @@ pub fn run_func(name: String, funcs: &HashMap<String, (Vec<u8>, Vec<Val>)>, stac
                         panic!("cannot compare bools");
                     }
 
-                    Val::Array(_) => {
+                    Val::Array{ty: _, arr: _} => {
                         panic!("cannot compare arrays");
                     }
                 }
@@ -804,7 +845,7 @@ pub fn run_func(name: String, funcs: &HashMap<String, (Vec<u8>, Vec<Val>)>, stac
                         panic!("cannot compare bools");
                     }
 
-                    Val::Array(_) => {
+                    Val::Array{ty: _, arr: _} => {
                         panic!("cannot compare arrays");
                     }
                 }
@@ -892,7 +933,128 @@ pub fn run_func(name: String, funcs: &HashMap<String, (Vec<u8>, Vec<Val>)>, stac
                 }
             }
 
+            BCInst::INSERT_ARR_AT => {
+                let nval = stack.pop().expect("stack too short");
+                let index = stack.pop().expect("stack too short");
+                let array = stack.pop().expect("stack too short");
+
+                if let Val::Array{ty, mut arr} = array {
+                    match index {
+                        Val::Int(i) => {
+                            if (i as usize) < arr.len() {
+                                match nval {
+                                    Val::Array{ty: _, arr: _} => {
+                                        if ty == Type::Array {
+                                            arr[i as usize] = nval;
+                                        }
+                                        else {
+                                            panic!("The type of the given value does not match the one required for the array")
+                                        }
+                                    }
+                                    Val::Int(_) => {
+                                        if ty == Type::Int {
+                                            arr[i as usize] = nval;
+                                        }
+                                        else {
+                                            panic!("The type of the given value does not match the one required for the array")
+                                        }
+                                    }
+                                    Val::Float(_) => {
+                                        if ty == Type::Float {
+                                            arr[i as usize] = nval;
+                                        }
+                                        else {
+                                            panic!("The type of the given value does not match the one required for the array")
+                                        }
+                                    }
+                                    Val::Long(_) => {
+                                        if ty == Type::Long {
+                                            arr[i as usize] = nval;
+                                        }
+                                        else {
+                                            panic!("The type of the given value does not match the one required for the array")
+                                        }
+                                    }
+                                    Val::String(_) => {
+                                        if ty == Type::String {
+                                            arr[i as usize] = nval;
+                                        }
+                                        else {
+                                            panic!("The type of the given value does not match the one required for the array")
+                                        }
+                                    }
+                                    Val::Bool(_) => {
+                                        if ty == Type::Bool {
+                                            arr[i as usize] = nval;
+                                        }
+                                        else {
+                                            panic!("The type of the given value does not match the one required for the array")
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        _ => {
+                            panic!("can only index array using int");
+                        }
+                    }
+                }
+            }
+
+            BCInst::GET_ARR_AT => {
+                let idx = stack.pop().expect("stack too short");
+                let array = stack.pop().expect("stack too short");
+
+                if let Val::Array{ty, arr} = array {
+                    if let Val::Int(i) = idx {
+                        stack.push(arr[i as usize].clone());
+                    }
+                    else {
+                        panic!("arrays can only be indexed by integers");
+                    }
+                }
+                else {
+                    panic!("The second to top value has to be an array");
+                }
+            }
+
+            BCInst::PUSH_TO_ARR => {
+                let val = stack.pop().expect("stack too short");
+                let array = stack.pop().expect("stack too short");
+
+                if let Val::Array{ty, mut arr} = array {
+                    arr.push(val);
+                    stack.push(Val::Array{ty, arr});
+                }
+                else {
+                    panic!("the second to top value has to be an array");
+                }
+            }
+
+            BCInst::POP_FROM_ARR => {
+                let array = stack.pop().expect("stack too short");
+                if let Val::Array{ty, mut arr} = array {
+                    stack.push(arr.pop().expect("the array could not be poped"));
+                    stack.push(Val::Array{ty, arr});
+                }
+            }
+
+            BCInst::LOAD_ARR_LEN => {
+                let array = stack.pop().expect("stack too short");
+                if let Val::Array{ty, arr} = array {
+                    stack.push(Val::Int(arr.len() as i32));
+                }
+                else {
+                    panic!("can only index arrays");
+                }
+            }
+
             BCInst::NOP => {}
+
+            BCInst::RET =>{
+                return;
+            }
 
             _ => panic!("unknown byte code: {}", func[i])
         }

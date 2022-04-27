@@ -46,7 +46,10 @@ pub enum AstNode {
     Bool(bool),
     Float(f64),
     String(String),
-    Array(Vec<AstNode>),
+    Array{
+        ty: String,
+        arr: Vec<AstNode>
+    },
     BinOp { // binary operation (operation with two arguments)
         op: BinOp, // type of operation
         lhs: Box<AstNode>, // left side of operation
@@ -83,6 +86,7 @@ pub enum AstNode {
     },
     FuncCall { // a call to a function e.g. log("Hello, World!");
         ident: String, // name of the function to be called
+        has_avp: bool, // does it contian the ":>" syntax
         args: Vec<AstNode>, // array of arguments given to the function (optional)
     },
     // Expr(Box<AstNode>), // Can either be a calculation or a string
@@ -353,11 +357,16 @@ fn parse_func_call(call: Pair<Rule>) -> AstNode {
 
     let mut ident = String::new();
     let mut input = vec![];
+    let mut avp = false;
 
     for p in call.into_inner() {
         match p.as_rule() {
             Rule::ident => {
                 ident = p.as_str().to_owned();
+            }
+
+            Rule::AVP => {
+                avp = true;
             }
 
             Rule::Expr => {
@@ -373,6 +382,7 @@ fn parse_func_call(call: Pair<Rule>) -> AstNode {
     return AstNode::FuncCall {
         ident,
         args: input,
+        has_avp: avp,
     }
 }
 
@@ -412,14 +422,33 @@ fn parse_expr(expr: Pair<Rule>) -> AstNode{
 
 fn parse_array(arr: Pair<Rule>) -> AstNode {
     let inner = arr.into_inner();
-
     let mut res = vec![];
+    let mut ty = "".to_owned();
 
     for i in inner {
-        res.push(parse_expr(i));
+        match i.as_rule() {
+            Rule::Type => {
+                ty = i.as_str().to_owned();
+            }
+
+            _ => {res.push(parse_expr(i));}
+        }
     }
 
-    return AstNode::Array(res);
+    if ty == "".to_owned() {
+        match res[0] {
+            AstNode::Integer(_) => {ty = "int".to_owned()}
+            AstNode::Bool(_) => {ty = "bool".to_owned()}
+            AstNode::Array{ty: _, arr: _} => {ty = "array".to_owned()}
+            AstNode::String(_) => {ty = "string".to_owned()}
+            AstNode::Float(_) => {ty = "float".to_owned()}
+
+            _ => {
+                panic!("invalid part of array");
+            }
+        }
+    }
+    return AstNode::Array{ty, arr: res};
 }
 
 fn parse_sum(sum: Pair<Rule>) -> AstNode {

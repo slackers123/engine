@@ -2,12 +2,16 @@ use crate::ast;
 
 use crate::bcvm::Val;
 use crate::bcvm::BCInst;
+use crate::bcvm::Type;
 
 use std::collections::HashMap;
 
 pub fn assemble_bc(defs: Vec<ast::AstNode>, funcs: HashMap<String, ast::AstNode>) -> (HashMap<String, (Vec<u8>, Vec<Val>)>, Vec<Val>, Option<String>) {
     let mut fns: HashMap<String, (Vec<u8>, Vec<Val>)> = HashMap::new();
     fns.insert("log".to_owned(), (vec![BCInst::PRINT], vec![]));
+    fns.insert("push".to_owned(), (vec![BCInst::STORE_LOCAL_VAL, 0, BCInst::STORE_LOCAL_VAL, 1, BCInst::LOAD_LOCAL_VAL, 0, BCInst::LOAD_LOCAL_VAL, 1, BCInst::PUSH_TO_ARR], vec![]));
+    fns.insert("get_len".to_owned(), (vec![BCInst::LOAD_ARR_LEN], vec![]));
+    fns.insert("get_at".to_owned(), (vec![BCInst::GET_ARR_AT], vec![]));
     let mut entry = None;
     for d in defs { // TODO: handle imports
         match d {
@@ -70,8 +74,8 @@ fn asm_block(bc: &mut Vec<u8>, consts: &mut Vec<Val>, temp_vars: &mut HashMap<St
     let mut len = 0;
     for b in block {
         match b {
-            ast::AstNode::FuncCall {ident, args} => {
-                len += asm_func_call(bc, consts, &temp_vars, ident, args);
+            ast::AstNode::FuncCall {ident, has_avp, args} => {
+                len += asm_func_call(bc, consts, &temp_vars, ident, args, has_avp);
             }
 
             ast::AstNode::IfStmt{condition, block, else_if_stmt, else_stmt} => {
@@ -87,8 +91,8 @@ fn asm_block(bc: &mut Vec<u8>, consts: &mut Vec<Val>, temp_vars: &mut HashMap<St
                         len += asm_bool_op(bc, consts, &temp_vars, op, *lhs, *rhs);
                     }
 
-                    ast::AstNode::FuncCall{ident, args} => {
-                        len += asm_func_call(bc, consts, &temp_vars, ident, args);
+                    ast::AstNode::FuncCall{ident, has_avp, args} => {
+                        len += asm_func_call(bc, consts, &temp_vars, ident, args, has_avp);
                     }
 
                     _ => {panic!("not supported: {:?}", *condition)}
@@ -151,8 +155,8 @@ fn asm_block(bc: &mut Vec<u8>, consts: &mut Vec<Val>, temp_vars: &mut HashMap<St
                         len += asm_bool_op(bc, consts, &temp_vars, op, *lhs, *rhs);
                     }
 
-                    ast::AstNode::FuncCall{ident, args} => {
-                        len += asm_func_call(bc, consts, &temp_vars, ident, args);
+                    ast::AstNode::FuncCall{ident, has_avp, args} => {
+                        len += asm_func_call(bc, consts, &temp_vars, ident, args, has_avp);
                     }
 
                     _ => {panic!("not supported: {:?}", *condition)}
@@ -181,7 +185,6 @@ fn asm_block(bc: &mut Vec<u8>, consts: &mut Vec<Val>, temp_vars: &mut HashMap<St
 }
 
 fn asm_jmp_dist(bc: &mut Vec<u8>, diff: u64, go_fwd: bool, in_while: bool) -> usize {
-    println!("diff: {}", diff);
     let mut len = 0;
     let mut diff = diff;
     let fwd = (!go_fwd as u8)<<4;
@@ -225,11 +228,10 @@ fn asm_jmp_dist(bc: &mut Vec<u8>, diff: u64, go_fwd: bool, in_while: bool) -> us
         len += 9;
     }
 
-    println!("resulting bc: {:?}", bc);
     return len;
 }
 
-fn asm_func_call(bc: &mut Vec<u8>, consts: &mut Vec<Val>, temp_vars: &HashMap<String, u8>, ident: String, args: Vec<ast::AstNode>) -> usize {
+fn asm_func_call(bc: &mut Vec<u8>, consts: &mut Vec<Val>, temp_vars: &HashMap<String, u8>, ident: String, args: Vec<ast::AstNode>, has_avp: bool) -> usize {
     let mut len = 0;
     let mut i = args.len() as i32-1;
     while i >= 0{
@@ -250,6 +252,17 @@ fn asm_func_call(bc: &mut Vec<u8>, consts: &mut Vec<Val>, temp_vars: &HashMap<St
     bc.push(idx as u8);
     bc.push(BCInst::CALL_FUNC);
     len += 3;
+
+    if has_avp {
+        if args.len() > 0 {
+            bc.push(BCInst::STORE_LOCAL_VAL);
+            bc.push(bc[bc.len()-(len-2)]);
+            len += 2;
+        }
+        else {
+            panic!("cannot perform automatic value propagation on functions which take no inputs");
+        }
+    }
 
     return len;
 }
@@ -288,12 +301,12 @@ fn asm_expr(bc: &mut Vec<u8>, consts: &mut Vec<Val>, temp_vars: &HashMap<String,
             len += asm_bin_op(bc, consts, temp_vars, op, *lhs, *rhs);
         }
 
-        ast::AstNode::FuncCall{ident, args} => {
-            len += asm_func_call(bc, consts, temp_vars, ident, args);
+        ast::AstNode::FuncCall{ident, has_avp, args} => {
+            len += asm_func_call(bc, consts, temp_vars, ident, args, has_avp);
         }
 
-        ast::AstNode::Array(arr) => {
-            let idx = push_to_consts(consts, get_as_val(ast::AstNode::Array(arr)));
+        ast::AstNode::Array{ty, arr} => {
+            let idx = push_to_consts(consts, get_as_val(ast::AstNode::Array{ty, arr}));
             bc.push(BCInst::LOAD_CONST);
             bc.push(idx as u8);
             len += 2;
@@ -348,6 +361,7 @@ fn asm_bool_op(bc: &mut Vec<u8>, consts: &mut Vec<Val>, temp_vars: &HashMap<Stri
 }
 
 fn get_as_val(ast: ast::AstNode) -> Val {
+    println!("{:?}", ast);
     match ast {
         ast::AstNode::Integer(i) => {
             return Val::Int(i);
@@ -358,12 +372,42 @@ fn get_as_val(ast: ast::AstNode) -> Val {
         ast::AstNode::Bool(b) => {
             return Val::Bool(b);
         }
-        ast::AstNode::Array(arr) => {
+        ast::AstNode::Array{ty, arr} => {
             let mut res = vec![];
             for a in arr {
                 res.push(get_as_val(a));
             }
-            return Val::Array(res);
+
+            match ty.as_str() {
+                
+                "int" => {
+                    return Val::Array{ty: Type::Int, arr: res};
+                }
+
+                "long" => {
+                    return Val::Array{ty: Type::Long, arr: res};
+                }
+
+                "float" => {
+                    return Val::Array{ty: Type::Float, arr: res};
+                }
+
+                "string" => {
+                    return Val::Array{ty: Type::String, arr: res};
+                }
+
+                "bool" => {
+                    return Val::Array{ty: Type::Bool, arr: res};
+                }
+
+                "array" => {
+                    return Val::Array{ty: Type::Array, arr: res};
+                }
+
+                _ => {
+                    panic!("unknown typ: {}", ty);
+                }
+            }
         }
 
         _ => {panic!("not a valid value")}

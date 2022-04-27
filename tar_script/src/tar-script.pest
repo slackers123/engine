@@ -41,7 +41,7 @@ valAssign = 	 { ident ~ "=" ~ Expr ~ EOS }
 
 decl = 	         { arrayOrType ~ ident ~ "=" ~ Expr ~ EOS }
 
-funcCall = 		  { ident ~ "(" ~ (Expr ~ ",")* ~ Expr? ~ ")" ~ EOS }
+funcCall = 		  { ident ~AVP? ~ "(" ~ (Expr ~ ",")* ~ Expr? ~ ")" ~ EOS }
 innerFuncCall = { ident ~ "(" ~ (Expr ~ ",")* ~ Expr? ~ ")" }
 
 Expr =           { bool | Sum | string | array }
@@ -75,7 +75,7 @@ float =     @{ ASCII_DIGIT+ ~ "." ~ ASCII_DIGIT+ ~ "f" }
 
 bool =      @{"true" | "false"}
 
-array =      { "[" ~ Expr ~ ("," ~ Expr)* ~ "]" }
+array =      { "[" ~ Expr? ~ ("," ~ Expr)* ~ "]" ~ ("::" ~ Type)? }
 
 args = 			 { arg ~ ("," ~ arg)* }
 
@@ -90,3 +90,5 @@ Type = 			 { "int" | "string" | "float" | "bool" }
 Array =      { Type ~ brackets }
 
 brackets =  _{ "[" ~ brackets? ~ "]" }
+
+AVP =        { ":>" }

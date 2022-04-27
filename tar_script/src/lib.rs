@@ -1,5 +1,5 @@
 pub mod ast;
-pub mod astint;
+// pub mod astint;
 pub mod bcvm;
 pub mod bcasm;
 
