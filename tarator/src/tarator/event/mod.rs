@@ -55,9 +55,7 @@ macro_rules! INTERN_EVENT_IMPLEMENT {
             fn get_action(&self) -> EventAction { return self.event_type; }
             fn get_handled(&self) -> bool { return self.handled; }
             fn set_handled_callback(&mut self, func: &fn()->bool) { self.handled = func(); }
-            fn as_any(&self) -> &dyn std::any::Any {
-                return self;
-            }
+            CASTIMPL!();
         }
     };
 }

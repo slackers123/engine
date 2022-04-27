@@ -7,3 +7,6 @@
 [submodule "vendor/glfw"]
 	path = vendor/glfw
 	url = https://github.com/PistonDevelopers/glfw-rs.git
+[submodule "vendor/egui"]
+	path = vendor/egui
+	url = https://github.com/emilk/egui.git

@@ -2,6 +2,12 @@ use crate::tarator::{
     event::Event,
     core::{Vector, SPtr}
 };
+bitflags! {
+    pub struct LayerCategory: u8 {
+        const NONE = 0;
+        const GUI = BIT!(0);
+    }
+}
 /// ## Layer
 /// ```
 /// // Necessary Implementations:
@@ -15,7 +21,7 @@ use crate::tarator::{
 /// fn event(&self, event: &dyn Event);
 /// ```
 pub trait Layer {
-    fn new(name: String) -> Self where Self: Sized;
+    fn new() -> Self where Self: Sized;
     // Executes when attaching to LayerStack
     fn attach(&self) {}
     // Executes when detaching from LayerStack
@@ -25,11 +31,14 @@ pub trait Layer {
     #[allow(unused)]
     fn event(&self, event: &dyn Event) {}
     fn get_name(&self) -> String;
+    fn get_category(&self) -> LayerCategory;
+    fn is_in_category(&self, category: LayerCategory) -> bool { return self.get_category() == category; }
+    fn as_any(&self) -> &dyn std::any::Any;
 }
 /// ## LayerStack
 /// Manages Layers
 pub struct LayerStack {
-    pub layers: Vector<SPtr<dyn Layer>>,
+    layers: Vector<SPtr<dyn Layer>>,
     index: usize
 }
 impl LayerStack {
@@ -61,5 +70,9 @@ impl LayerStack {
         if let Some(index) = self.layers.iter().position(|element| element.get_name() == name) {
             self.layers.remove(index);
         }
+    }
+    #[allow(unused)]
+    pub fn get_iter(&self) -> std::slice::Iter<SPtr<dyn Layer>> {
+        return self.layers.iter();
     }
 }

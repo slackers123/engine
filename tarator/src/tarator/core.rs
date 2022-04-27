@@ -44,6 +44,12 @@ macro_rules! CAST {
     };
 }
 #[macro_export]
+macro_rules! CASTIMPL {
+    () => {
+        fn as_any(&self) -> &dyn std::any::Any { return self; }
+    };
+}
+#[macro_export]
 macro_rules! TR_ASSERT {
     ($arg:expr, $($message:tt)*) => {
         if $arg == 0 {

@@ -3,14 +3,12 @@
 /// Use this trait in another crate to create your application
 
 use crate::tarator::{
-    window::{WindowProps, Window},
     layer::*,
     core::SPtr,
     event::Event
 };
-pub trait Application<TWindow> where
-    TWindow: Window{
-    fn new(window_props: &WindowProps) -> Self;
+pub trait Application {
+    fn new() -> Self;
     fn run(&mut self);
     fn event(&self, event: &dyn Event);
     fn push_layer(&mut self, layer: SPtr<dyn Layer>);
@@ -20,9 +18,8 @@ pub trait Application<TWindow> where
 #[macro_export]
 macro_rules! APPLICATION_DECLARE {
     ($label:tt) => {
-        pub struct $label<TWindow> where
-            TWindow: Window {
-            window: UPtr<TWindow>,
+        pub struct $label {
+            window: UPtr<dyn Window>,
             layer_stack: UPtr<LayerStack>
         }
     };
