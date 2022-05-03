@@ -10,3 +10,6 @@
 [submodule "vendor/egui"]
 	path = vendor/egui
 	url = https://github.com/emilk/egui.git
+[submodule "vendor/egui_glfw_gl"]
+	path = vendor/egui_glfw_gl
+	url = https://github.com/cohaereo/egui_glfw_gl.git

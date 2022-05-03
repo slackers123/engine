@@ -44,9 +44,23 @@ macro_rules! CAST {
     };
 }
 #[macro_export]
+macro_rules! CASTMUT {
+    ($arg:expr, $label:tt) => {
+        $arg.as_any_mut().downcast_mut::<$label>().expect("CAST FAILED!");
+    };
+}
+#[macro_export]
 macro_rules! CASTIMPL {
     () => {
         fn as_any(&self) -> &dyn std::any::Any { return self; }
+        fn as_any_mut(&mut self) -> &mut dyn std::any::Any { return self; }
+    };
+}
+#[macro_export]
+macro_rules! CASTIMPLTRAIT {
+    () => {
+        fn as_any(&self) -> &dyn std::any::Any;
+        fn as_any_mut(&mut self) -> &mut dyn std::any::Any;
     };
 }
 #[macro_export]

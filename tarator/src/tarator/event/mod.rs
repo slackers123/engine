@@ -43,7 +43,7 @@ pub trait Event {
     fn is_in_category(&self, category: EventCategory) -> bool { return self.get_category() == category; }
     fn is_in_action(&self, action: EventAction) -> bool { return self.get_action() == action; }
     fn set_handled_callback(&mut self, func: &fn()->bool);
-    fn as_any(&self) -> &dyn std::any::Any;
+    CASTIMPLTRAIT!();
 }
 /// ## Event Implementations
 /// Gets rid of boilerplate code for the implementation of every single event struct

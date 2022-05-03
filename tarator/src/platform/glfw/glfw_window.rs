@@ -1,10 +1,7 @@
 use crate::{
     tarator::{
-        core::{UPtr, Vector},
-        window::{
-            Window,
-            WindowProps
-        },
+        core::*,
+        window::*,
         event::{
             Event,
             application_event::*,
@@ -16,11 +13,11 @@ use crate::{
 };
 extern crate glfw;
 mod g {
-    pub extern crate glfw;
-    pub use glfw::*;
+    pub extern crate egui_glfw_gl;
     pub use std::sync::mpsc::Receiver;
+    pub use egui_glfw_gl::glfw::*;
 }
-pub use glfw::Context;
+pub use egui_glfw_gl::glfw::Context;
 /// ## GLFWWindowData
 struct GLFWWindowData {
     #[allow(unused)]
@@ -39,9 +36,8 @@ pub struct GLFWWindow {
     data: GLFWWindowData
 }
 impl Window for GLFWWindow {
-    fn update(&mut self) -> Vector<UPtr<dyn Event>> {
+    fn update(&mut self) -> Vector<UPtr<dyn Event>> { 
         let mut return_events: Vector<UPtr<dyn Event>> = Vector::new();
-        self.glfw.poll_events();
         #[allow(unused)]
         for (f, event) in g::flush_messages(&self.events) {
             match event {
@@ -92,15 +88,22 @@ impl Window for GLFWWindow {
                 _ => ()
             }
         }
+        self.window.swap_buffers();
+        self.glfw.poll_events();
+        return_events.push(UPtr::new(ApplicationUpdateEvent::default()));
         return return_events;
     }
     fn get_width(&self) -> u32 { return self.data.width; }
     fn get_height(&self) -> u32 { return self.data.height; }
+    fn get_api(&self) -> WindowAPI {
+        return WindowAPI::GLFW;
+    }
 
     // #[allow(unused)]
     // fn set_event_callback(&self, callback: &EventCallbackFn) {}
     fn set_vsync(&mut self, enabled: bool) { self.data.vsync = enabled; }
     fn get_vsync_enabled(&self) -> bool { return self.data.vsync; }
+    CASTIMPL!();
 
     fn new(window_props: &WindowProps) -> GLFWWindow {
         let mut glfw = g::init(g::FAIL_ON_ERRORS).unwrap();
@@ -109,14 +112,17 @@ impl Window for GLFWWindow {
             window_props.width,
             window_props.height,
             window_props.title.as_str(),
-            glfw::WindowMode::Windowed,
+            egui_glfw_gl::glfw::WindowMode::Windowed,
         ).expect("Failed to create GLFW window.");
         window.set_sticky_keys(true);
         window.set_all_polling(true);
         window.make_current();
+        glfw.set_swap_interval(egui_glfw_gl::glfw::SwapInterval::Sync(1));
+        gl::load_with(|symbol| window.get_proc_address(symbol) as *const _);
+        unsafe{gl::ClearColor(0.455, 0.302, 0.663, 1.0);}
         return GLFWWindow {
             glfw: UPtr::new(glfw),
-            events: events,
+            events,
             window: UPtr::new(window),
             data: GLFWWindowData {
                 title: window_props.title.clone(),
@@ -125,5 +131,10 @@ impl Window for GLFWWindow {
                 vsync: true
             }
         };
+    }
+}
+impl GLFWWindow {
+    pub fn get_native(&mut self) -> &mut g::Window {
+        return self.window.as_mut();
     }
 }

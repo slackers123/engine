@@ -1,7 +1,5 @@
 mod example_layer;
-mod egui_layer;
 use example_layer::*;
-use egui_layer::*;
 
 #[macro_use]
 extern crate tarator;
@@ -10,11 +8,14 @@ use tarator::{
     tarator::{
         application::Application,
         window::{WindowProps, Window},
-        core::{UPtr, SPtr, Vector},
+        core::*,
         event::*,
         layer::*
     },
-    platform::glfw::glfw_window::GLFWWindow
+    platform::glfw::{
+        glfw_window::GLFWWindow,
+        glfw_egui::GLFWEGUILayer
+    }
 };
 
 APPLICATION_DECLARE!(SandboxApplication);
@@ -26,12 +27,21 @@ impl Application for SandboxApplication {
             window: UPtr::new(GLFWWindow::new(&WindowProps::default())),
             layer_stack: UPtr::new(LayerStack::new())
         };
-        app.push_layer(SPtr::new(ExampleLayer::new()));
-        app.push_overlay(SPtr::new(EGUILayer::new()));
+        app.push_layer(UPtr::new(ExampleLayer::new()));
+        let gui = UPtr::new(GLFWEGUILayer::new_glfw_egui(CASTMUT!(app.window.as_mut(), GLFWWindow), |ui| {
+            ui.separator();
+            ui.label("Tarator EGUI RUNNING!");
+            if ui.button("Click Me").clicked() {
+                println!("Clicked");
+            }
+        }));
+        app.push_layer(gui);
         return app;
     }
     fn run(&mut self) {
+        let deltastart = std::time::Instant::now();
         loop {
+            let delta = deltastart.elapsed().as_secs_f64();
             let event: Vector<UPtr<dyn Event>> = self.window.update();
             for event in event {
                 self.event(event.as_ref());
@@ -41,11 +51,9 @@ impl Application for SandboxApplication {
                         return;
                     },
                     EventAction::APPLICATIONUPDATE => {
-                        for layer in self.layer_stack.get_iter() {
-                            match layer.get_category() {
-                                LayerCategory::NONE => layer.update(),
-                                _ => ()
-                            }
+                        for layer in self.layer_stack.get_iter_mut() {
+                            layer.update(delta);
+                            layer.update_mut(delta);
                         }
                     }
                     _ => {}

@@ -9,4 +9,4 @@ edition = "2021"
 log = { path = "../vendor/log"}
 
 tarator = { path = "../tarator"}
-eframe = { path = "../vendor/egui/eframe" }
+egui_glfw_gl = { path = "../vendor/egui_glfw_gl" }

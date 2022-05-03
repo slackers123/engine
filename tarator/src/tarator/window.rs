@@ -1,12 +1,16 @@
-//! # Window
-//! Provides the Window Trait Implementation with Window Information
 //! Implemented in platform/*
 
 use crate::tarator::{
     event::Event,
     core::{UPtr, Vector}
 };
-
+bitflags! {
+    pub struct WindowAPI: u8 {
+        const NONE = 0;
+        const GLFW = BIT!(0);
+        const WINIT = BIT!(1);
+    }
+}
 /// ## WindowProps
 /// Simple Properties of a window used for creating one
 pub struct WindowProps {
@@ -15,7 +19,7 @@ pub struct WindowProps {
     #[allow(unused)]
     pub width: u32,
     #[allow(unused)]
-    pub height: u32
+    pub height: u32,
 }
 impl Default for WindowProps {
     fn default() -> WindowProps {
@@ -53,6 +57,8 @@ pub trait Window {
     fn update(&mut self) -> Vector<UPtr<dyn Event>>;
     fn get_width(&self) -> u32;
     fn get_height(&self) -> u32;
+    fn get_api(&self) -> WindowAPI;
+    fn is_in_api(&self, api: WindowAPI) -> bool { return self.get_api() == api; }
 
     // Window Attributes
     // fn set_event_callback(&self, callback: &EventCallbackFn);
@@ -60,4 +66,6 @@ pub trait Window {
     fn get_vsync_enabled(&self) -> bool;
 
     fn new(window_props: &WindowProps) -> Self where Self: Sized;
+
+    CASTIMPLTRAIT!();
 }

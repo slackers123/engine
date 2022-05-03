@@ -4,15 +4,15 @@
 
 use crate::tarator::{
     layer::*,
-    core::SPtr,
+    core::*,
     event::Event
 };
 pub trait Application {
     fn new() -> Self;
     fn run(&mut self);
     fn event(&self, event: &dyn Event);
-    fn push_layer(&mut self, layer: SPtr<dyn Layer>);
-    fn push_overlay(&mut self, layer: SPtr<dyn Layer>);
+    fn push_layer(&mut self, layer: UPtr<dyn Layer>);
+    fn push_overlay(&mut self, layer: UPtr<dyn Layer>);
 }
 
 #[macro_export]
@@ -27,11 +27,11 @@ macro_rules! APPLICATION_DECLARE {
 #[macro_export]
 macro_rules! APPLICATION_LAYERIMPL {
     ($label:tt) => {
-        fn push_layer(&mut self, layer: SPtr<dyn Layer>) {
+        fn push_layer(&mut self, layer: UPtr<dyn Layer>) {
             layer.attach();
             self.layer_stack.push_layer(layer);
         }
-        fn push_overlay(&mut self, layer: SPtr<dyn Layer>) {
+        fn push_overlay(&mut self, layer: UPtr<dyn Layer>) {
             layer.attach();
             self.layer_stack.push_overlay(layer);
         }

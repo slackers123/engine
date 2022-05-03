@@ -1,6 +1,7 @@
 use crate::tarator::{
     event::Event,
-    core::{Vector, SPtr}
+    core::*,
+    window::Window
 };
 bitflags! {
     pub struct LayerCategory: u8 {
@@ -26,19 +27,21 @@ pub trait Layer {
     fn attach(&self) {}
     // Executes when detaching from LayerStack
     fn detach(&self) {}
-    fn update(&self) {}
-    fn gui_update(&self) {}
+    #[allow(unused)]
+    fn update(&self, delta: f64) {}
+    #[allow(unused)]
+    fn update_mut(&mut self, delta: f64) {}
     #[allow(unused)]
     fn event(&self, event: &dyn Event) {}
     fn get_name(&self) -> String;
     fn get_category(&self) -> LayerCategory;
     fn is_in_category(&self, category: LayerCategory) -> bool { return self.get_category() == category; }
-    fn as_any(&self) -> &dyn std::any::Any;
+    CASTIMPLTRAIT!(); 
 }
 /// ## LayerStack
 /// Manages Layers
 pub struct LayerStack {
-    layers: Vector<SPtr<dyn Layer>>,
+    layers: Vector<UPtr<dyn Layer>>,
     index: usize
 }
 impl LayerStack {
@@ -50,12 +53,12 @@ impl LayerStack {
         }
     }
     #[allow(unused)]
-    pub fn push_layer(&mut self, layer: SPtr<dyn Layer>) {
+    pub fn push_layer(&mut self, layer: UPtr<dyn Layer>) {
         self.layers.insert(self.index, layer);
         self.index += 1;
     }
     #[allow(unused)]
-    pub fn push_overlay(&mut self, layer: SPtr<dyn Layer>) {
+    pub fn push_overlay(&mut self, layer: UPtr<dyn Layer>) {
         self.layers.insert(0, layer);
     }
     #[allow(unused)]
@@ -72,7 +75,12 @@ impl LayerStack {
         }
     }
     #[allow(unused)]
-    pub fn get_iter(&self) -> std::slice::Iter<SPtr<dyn Layer>> {
+    pub fn get_iter_mut(&mut self) -> std::slice::IterMut<UPtr<dyn Layer>> {
+        return self.layers.iter_mut();
+    }
+    #[allow(unused)]
+    pub fn get_iter(&self) -> std::slice::Iter<UPtr<dyn Layer>> {
         return self.layers.iter();
     }
 }
+

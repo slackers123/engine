@@ -1,4 +1,4 @@
-use glfw::{Key, Key::*, MouseButton, MouseButton::*};
+use egui_glfw_gl::glfw::{Key, Key::*, MouseButton, MouseButton::*};
 use crate::tarator::keycode::*;
 /// ## get_tr_mousekeycode
 /// gets the glfw mousekeycode

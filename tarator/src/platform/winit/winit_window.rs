@@ -82,12 +82,16 @@ impl Window for WinitWindow {
     }
     fn get_width(&self) -> u32 { return self.data.width; }
     fn get_height(&self) -> u32 { return self.data.height; }
+    fn get_api(&self) -> WindowAPI {
+        return WindowAPI::WINIT;
+    }
 
     // #[allow(unused)]
     // fn set_event_callback(&self, callback: &EventCallbackFn) {}
     #[allow(unused)]
     fn set_vsync(&mut self, enabled: bool) { self.data.vsync = enabled; }
     fn get_vsync_enabled(&self) -> bool { return self.data.vsync; }
+    CASTIMPL!();
 
     #[allow(unused)]
     fn new(window_props: &WindowProps) -> WinitWindow {
