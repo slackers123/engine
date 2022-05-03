@@ -1,0 +1,46 @@
+#def entry = main;
+#use std::log;
+#use std::lists::{push, get_len, get_at};
+
+fn get_rev_vec(vec: int[]) -> int[] {
+    int[] vec2 = []::int;
+    int i = get_len(vec);
+    while (i > 0) {
+        push:>(vec2, get_at(vec, i));
+        i = i - 1;
+    }
+    return vec2;
+}
+
+fn pow(a: int, b: int) -> int {
+    int i = 0;
+    while (i < b) {
+        a = a * a;
+        i = i + 1;
+    }
+    return a;
+}
+
+fn get_int_val(nr: int[], b: int) -> int {
+    int sum = 0;
+    nr = get_rev_vec(nr);
+    int i = 0;
+    while (i < get_len(nr)) {
+        sum = sum + pow(get_at(nr, i) * b, i);
+        i = i + 1;
+    }
+
+    return sum;
+}
+
+fn devide_base(nr1: int[], b1: int, nr2: int) -> int[[]] {
+    int intv = get_int_val(nr1, b1);
+    if (nr1 < nr2) {
+        return [[0], [intv]::int];
+    }
+}
+
+fn main() {
+    pow(10, 2);
+}
+

@@ -6,13 +6,13 @@ Program = 		_{ SOI ~ definitions? ~ functions ~ EOI }
 definitions = 	  _{ (definition | import)+ }
 
 definition =     { "#def" ~ ident ~ "=" ~ ident ~ EOS }
-import = 	     { "#use" ~ ident ~ ("::" ~ident)* ~ EOS }
+import = 	     { "#use" ~ ident ~ ("::" ~ident)* ~ ("::" ~ "{" ~ ident ~ ("," ~ ident)* ~ "}")? ~ EOS }
 
 functions =      { funcDef+ }
 
 funcDef = 		 { "fn" ~ ident ~ "(" ~ args? ~ ")" ~ ("->" ~ retTy)? ~ "{" ~ block ~ "}" }
 
-retTy =       { Type }
+retTy =       { arrayOrType }
 
 block = {
 	(
@@ -39,12 +39,12 @@ returnStmt = 	 { "return" ~ Expr ~ EOS }
 
 valAssign = 	 { ident ~ "=" ~ Expr ~ EOS }
 
-decl = 	         { Type ~ ident ~ "=" ~ Expr ~ EOS }
+decl = 	         { arrayOrType ~ ident ~ "=" ~ Expr ~ EOS }
 
-funcCall = 		  { ident ~ "(" ~ (Expr ~ ",")* ~ Expr? ~ ")" ~ EOS }
+funcCall = 		  { ident ~AVP? ~ "(" ~ (Expr ~ ",")* ~ Expr? ~ ")" ~ EOS }
 innerFuncCall = { ident ~ "(" ~ (Expr ~ ",")* ~ Expr? ~ ")" }
 
-Expr =           { bool | Sum | string }
+Expr =           { bool | Sum | string | array }
 
 Sum =            { Product ~ ((plus | minus) ~ Product)* }
 
@@ -54,7 +54,6 @@ Value =          _{ float | int | innerFuncCall | ident | "(" ~ Expr ~ ")" }
 
 boolOp =        _{ equal | greaterThan | lessThan | greaterThanEqual | lessThanEqual }
 
-unaryOperation =_{ plus | minus }
 operation =     _{ plus | minus | div | mul }
 
 plus =  { "+" }
@@ -76,10 +75,20 @@ float =     @{ ASCII_DIGIT+ ~ "." ~ ASCII_DIGIT+ ~ "f" }
 
 bool =      @{"true" | "false"}
 
+array =      { "[" ~ Expr? ~ ("," ~ Expr)* ~ "]" ~ ("::" ~ Type)? }
+
 args = 			 { arg ~ ("," ~ arg)* }
 
-arg = 			 { ident ~ ":" ~ Type }
+arg = 			 { ident ~ ":" ~ arrayOrType }
 
 ident = 		@{ ASCII_ALPHA ~ (ASCII_ALPHANUMERIC | "_")* }
 
+arrayOrType = _{ Array | Type }
+
 Type = 			 { "int" | "string" | "float" | "bool" }
+
+Array =      { Type ~ brackets }
+
+brackets =  _{ "[" ~ brackets? ~ "]" }
+
+AVP =        { ":>" }

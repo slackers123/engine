@@ -3,8 +3,12 @@
 /render-tests/test1/Cargo.lock
 
 # tar-script
-/tar-script/target
-/tar-script/Cargo.lock
+/tar_script/target
+/tar_script/Cargo.lock
+
+# tar-script manager
+/tarmg/target
+/tarmg/Cargo.lock
 
 # entry-point
 /entry_point/target
