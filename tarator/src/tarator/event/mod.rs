@@ -36,7 +36,7 @@ bitflags! {
 }
 /// ## Event
 /// Event Base Trait, implemented in the event structs
-pub trait Event {
+pub trait Event{
     fn get_category(&self) -> EventCategory;
     fn get_action(&self) -> EventAction;
     fn get_handled(&self) -> bool;

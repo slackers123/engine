@@ -24,7 +24,7 @@ impl Layer for ExampleLayer {
     fn get_category(&self) -> LayerCategory {
         return self.category;
     }
-    fn event(&self, event: &dyn Event) {
+    fn event(&self, event: &dyn Event, delta: f64) {
         match event.get_action() {
             EventAction::KEYPRESSED => println!("Key Pressed: {}", CAST!(event, KeyPressedEvent).get_key_code()),
             EventAction::KEYRELEASED => println!("Key Released: {}", CAST!(event, KeyReleasedEvent).get_key_code()),
@@ -53,5 +53,4 @@ impl Layer for ExampleLayer {
             _ => ()
         }
     }
-    CASTIMPL!();
 }

@@ -115,7 +115,10 @@ impl Window for WinitWindow {
         return WinitWindow {
             event_loop: UPtr::new(event_loop),
             window: UPtr::new(window),
-            data: data
+            data
         };
+    }
+    fn get_native(&mut self) -> &mut dyn std::any::Any {
+        return self.window.as_mut();
     }
 }

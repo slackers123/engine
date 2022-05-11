@@ -1,7 +1,6 @@
 use crate::tarator::{
     event::Event,
-    core::*,
-    window::Window
+    core::*
 };
 bitflags! {
     pub struct LayerCategory: u8 {
@@ -30,13 +29,18 @@ pub trait Layer {
     #[allow(unused)]
     fn update(&self, delta: f64) {}
     #[allow(unused)]
-    fn update_mut(&mut self, delta: f64) {}
+    fn update_mut(&mut self, delta: f64) {
+        self.update(delta);
+    }
     #[allow(unused)]
-    fn event(&self, event: &dyn Event) {}
+    fn event(&self, event: &dyn Event, delta: f64) {}
+    #[allow(unused)]
+    fn event_mut(&mut self, event: &dyn Event,  delta: f64) {
+        self.event(event, delta)
+    }
     fn get_name(&self) -> String;
     fn get_category(&self) -> LayerCategory;
     fn is_in_category(&self, category: LayerCategory) -> bool { return self.get_category() == category; }
-    CASTIMPLTRAIT!(); 
 }
 /// ## LayerStack
 /// Manages Layers

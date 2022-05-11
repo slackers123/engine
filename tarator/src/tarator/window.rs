@@ -58,6 +58,7 @@ pub trait Window {
     fn get_width(&self) -> u32;
     fn get_height(&self) -> u32;
     fn get_api(&self) -> WindowAPI;
+    fn get_native(&mut self) -> &mut dyn std::any::Any;
     fn is_in_api(&self, api: WindowAPI) -> bool { return self.get_api() == api; }
 
     // Window Attributes

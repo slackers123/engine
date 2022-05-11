@@ -28,8 +28,8 @@ struct GLFWWindowData {
 }
 /// ## GLFWWindow
 pub struct GLFWWindow {
-    glfw: UPtr<g::Glfw>,
-    events: g::Receiver<(f64, g::WindowEvent)>,
+    pub glfw: UPtr<g::Glfw>,
+    pub events: g::Receiver<(f64, g::WindowEvent)>,
     #[allow(unused)]
     window: UPtr<g::Window>,
     // context: &'a dyn RenderContext,
@@ -132,9 +132,7 @@ impl Window for GLFWWindow {
             }
         };
     }
-}
-impl GLFWWindow {
-    pub fn get_native(&mut self) -> &mut g::Window {
+    fn get_native(&mut self) -> &mut dyn std::any::Any {
         return self.window.as_mut();
     }
 }
