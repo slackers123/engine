@@ -105,7 +105,7 @@ impl Window for GLFWWindow {
     fn get_vsync_enabled(&self) -> bool { return self.data.vsync; }
     CASTIMPL!();
 
-    fn new(window_props: &WindowProps) -> GLFWWindow {
+    fn new(window_props: WindowProps) -> GLFWWindow {
         let mut glfw = g::init(g::FAIL_ON_ERRORS).unwrap();
         glfw.window_hint(g::WindowHint::Resizable(true));
         let (mut window, events) = glfw.create_window(

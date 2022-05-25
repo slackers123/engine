@@ -1,14 +1,13 @@
 [package]
-name = "tarator_engine"
+name = "garlic"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-log = { path = "../vendor/log"}
-env_logger = { path = "../vendor/env_logger" }
-chrono = "0.4"
-
 tarator = { path = "../tarator" }
-sandbox = { path = "../sandbox" }
+log = { path = "../vendor/log" }
+env_logger = { path = "../vendor/env_logger" }
+
+gtk = { version = "0.4", package = "gtk4", features = ["v4_6"] }

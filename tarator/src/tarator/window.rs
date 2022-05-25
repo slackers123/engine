@@ -66,7 +66,7 @@ pub trait Window {
     fn set_vsync(&mut self, enabled: bool);
     fn get_vsync_enabled(&self) -> bool;
 
-    fn new(window_props: &WindowProps) -> Self where Self: Sized;
+    fn new(window_props: WindowProps) -> Self where Self: Sized;
 
     CASTIMPLTRAIT!();
 }

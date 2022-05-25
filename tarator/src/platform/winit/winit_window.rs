@@ -94,7 +94,7 @@ impl Window for WinitWindow {
     CASTIMPL!();
 
     #[allow(unused)]
-    fn new(window_props: &WindowProps) -> WinitWindow {
+    fn new(window_props: WindowProps) -> WinitWindow {
         TR_INFO!("Executing WinitWindow::new();\n");
         let event_loop= winit::event_loop::EventLoop::new();
         let data: WinitWindowData = WinitWindowData {
