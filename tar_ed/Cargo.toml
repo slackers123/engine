@@ -1,5 +1,5 @@
 [package]
-name = "garlic"
+name = "tar_ed"
 version = "0.1.0"
 edition = "2021"
 
@@ -11,3 +11,4 @@ log = { path = "../vendor/log" }
 env_logger = { path = "../vendor/env_logger" }
 
 gtk = { version = "0.4", package = "gtk4", features = ["v4_6"] }
+gdk = { version = "0.4", package = "gdk4", features = ["v4_6"] }

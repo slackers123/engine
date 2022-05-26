@@ -23,5 +23,5 @@
 /sandbox/Cargo.lock
 
 # garlic
-/garlic/target
-/garlic/Cargo.lock
+/tar_ed/target
+/tar_ed/Cargo.lock
