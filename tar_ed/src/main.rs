@@ -1,17 +1,39 @@
 use gtk::prelude::*;
-use gtk::{ApplicationWindow, Orientation};
+use gtk::{ApplicationWindow};
 
 #[macro_use]
 extern crate tarator;
+
+mod glium_gl_area;
+use glium_gl_area::GliumGLArea;
 
 APPLICATION_DECLARE!(TarEd);
 impl Application for TarEd {
     APPLICATION_LAYERIMPL!(TarEd);
     fn new() -> TarEd {
+
+        // Load GL pointers from epoxy (GL context management library used by GTK).
+        {
+            #[cfg(target_os = "macos")]
+            let library = unsafe { libloading::os::unix::Library::new("libepoxy.0.dylib") }.unwrap();
+            #[cfg(all(unix, not(target_os = "macos")))]
+            let library = unsafe { libloading::os::unix::Library::new("libepoxy.so.0") }.unwrap();
+            #[cfg(windows)]
+            let library = libloading::os::windows::Library::open_already_loaded("epoxy-0.dll").unwrap();
+
+            epoxy::load_with(|name| {
+                unsafe { library.get::<_>(name.as_bytes()) }
+                    .map(|symbol| *symbol)
+                    .unwrap_or(std::ptr::null())
+            });
+        }
+
+        // Create Application
         return TarEd {
             layer_stack: UPtr::new(LayerStack::new())
         }
     }
+    
     fn run(&mut self) {
         // Create a new application
         let app = gtk::Application::builder()
@@ -28,22 +50,13 @@ impl Application for TarEd {
 
 fn build_ui(app: &gtk::Application) {
     
-
-
-    let gtk_gl = gtk::GLArea::builder()
-        .build();
-
-    // Add buttons to `gtk_box`
-    let gtk_box = gtk::Box::builder()
-        .orientation(Orientation::Vertical)
-        .build();
-    gtk_box.append(&gtk_gl);
+    let widget = GliumGLArea::new();
 
     // Create a window
     let window = ApplicationWindow::builder()
         .application(app)
         .title("Tarator Editor")
-        .child(&gtk_box)
+        .child(&widget)
         .build();
 
     // Present the window

@@ -16,6 +16,10 @@ egui = { path = "../vendor/egui/egui" }
 eframe = { path = "../vendor/egui/eframe" }
 egui_glfw_gl = { path = "../vendor/egui_glfw_gl" }
 
+glium = { version = "0.31", default-features = false }
+epoxy = { version = "0.1" }
+libloading = { version = "0.7" }
+
 [dependencies.glfw]
 path = "../vendor/glfw"
 default-features = true

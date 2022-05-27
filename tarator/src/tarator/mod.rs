@@ -11,3 +11,5 @@ pub mod window;
 pub mod render;
 pub mod layer;
 pub mod input;
+#[allow(dead_code)]
+pub mod math;

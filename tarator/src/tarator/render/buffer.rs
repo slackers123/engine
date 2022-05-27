@@ -7,7 +7,7 @@
 //! - IndexBuffer
 //! VertexArray consist of both VertexBuffer and IndexBuffer 
 
-use crate::tarator::core::Vector;
+use crate::core::Vector;
 
 /// ## ShaderDataType
 /// Enum of different Shader data types used in shaders
@@ -113,19 +113,19 @@ impl BufferLayout {
 /// A buffer with vertices, used in VertexArray
 /// implemented in platform/*
 pub trait VertexBuffer {
+    fn new(vertices: &f32, size: u32) -> Self where Self: Sized;
     fn bind(&self);
     fn unbind(&self);
     fn get_layout(&self) -> BufferLayout;
     fn set_layout(&self, layout: &BufferLayout);
-    fn new(vertices: &f32, size: u32) -> Self;
 }
 
 /// ## IndexBuffer
 /// A buffer with indices, used in VertexArray
 /// implemented in platform/*
 pub trait IndexBuffer {
+    fn new(indices: &u32, size: u32) -> Self where Self: Sized;
     fn bind(&self);
     fn unbind(&self);
     fn get_count(&self) -> u32;
-    fn new(indices: &u32, size: u32) -> Self;
 }
