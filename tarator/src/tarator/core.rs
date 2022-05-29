@@ -40,13 +40,13 @@ macro_rules! BIT {
 #[macro_export]
 macro_rules! CAST {
     ($arg:expr, $label:tt) => {
-        $arg.as_any().downcast_ref::<$label>().expect("CAST FAILED!");
+        $arg.as_any().downcast_ref::<$label>().expect("CAST FAILED!")
     };
 }
 #[macro_export]
 macro_rules! CASTMUT {
     ($arg:expr, $label:tt) => {
-        $arg.as_any_mut().downcast_mut::<$label>().expect("CAST FAILED!");
+        $arg.as_any_mut().downcast_mut::<$label>().expect("CAST FAILED!")
     };
 }
 #[macro_export]

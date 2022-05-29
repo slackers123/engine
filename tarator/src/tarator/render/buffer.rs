@@ -7,12 +7,14 @@
 //! - IndexBuffer
 //! VertexArray consist of both VertexBuffer and IndexBuffer 
 
-use crate::core::Vector;
+use crate::{
+    core::Vector,
+    render::*
+};
 
 /// ## ShaderDataType
 /// Enum of different Shader data types used in shaders
 #[derive(Clone, Copy)]
-#[allow(unused)]
 enum ShaderDataType {
     None = 0,
     Float, Float2, Float3, Float4,
@@ -45,18 +47,29 @@ fn shader_data_type_size(shader_data_type: ShaderDataType) -> u32 {
     return 0;
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone)]
 struct BufferElement {
-    #[allow(unused)]
-    name: &'static str,
+    name: String,
     shader_data_type: ShaderDataType,
     size: u32,
     offset: u32,
-    #[allow(unused)]
     normalized: bool
 }
 
 impl BufferElement {
+    fn new(data_type: ShaderDataType, name: String, normalized: Option<bool>) -> BufferElement {
+        let norm = match normalized {
+            Some(norm) => norm,
+            None => false
+        };
+        return BufferElement {
+            name,
+            shader_data_type: data_type,
+            size: shader_data_type_size(data_type),
+            offset: 0,
+            normalized: norm
+        };
+    }
     #[allow(warnings)]
     fn get_component_count(&self) -> u32 {
         match self.shader_data_type {
@@ -80,24 +93,20 @@ impl BufferElement {
     }
 }
 
+#[derive(Clone)]
 pub struct BufferLayout {
-    #[allow(unused)]
     elements: Vector<BufferElement>,
-    #[allow(unused)]
     stride: u32
 }
 
 impl BufferLayout {
-    #[allow(unused)]
     fn new(element: Vector<BufferElement>) -> BufferLayout {
         let mut buffer_layout: BufferLayout = BufferLayout { elements: element, stride: 0 };
         buffer_layout.calculate_offsets_and_stride();
         return buffer_layout;
     }
-    #[allow(unused)]
     fn get_stride(&self) -> u32 { return self.stride; }
-    #[allow(unused)]
-    fn get_elements(&self) -> Vector<BufferElement> { return self.elements.clone();  }
+    fn get_elements(&self) -> &Vector<BufferElement> { return &self.elements;  }
     fn calculate_offsets_and_stride(&mut self) {
         let mut offset: u32 = 0;
         self.stride = 0;
@@ -113,19 +122,25 @@ impl BufferLayout {
 /// A buffer with vertices, used in VertexArray
 /// implemented in platform/*
 pub trait VertexBuffer {
-    fn new(vertices: &f32, size: u32) -> Self where Self: Sized;
     fn bind(&self);
     fn unbind(&self);
-    fn get_layout(&self) -> BufferLayout;
-    fn set_layout(&self, layout: &BufferLayout);
+    fn get_layout(&self) -> &Option<BufferLayout>;
+    fn set_layout(&mut self, layout: &BufferLayout);
+    
+    fn get_api(&self) -> API;
+    
+    CASTIMPLTRAIT!();
 }
 
 /// ## IndexBuffer
 /// A buffer with indices, used in VertexArray
 /// implemented in platform/*
 pub trait IndexBuffer {
-    fn new(indices: &u32, size: u32) -> Self where Self: Sized;
     fn bind(&self);
     fn unbind(&self);
     fn get_count(&self) -> u32;
+
+    fn get_api(&self) -> API;
+
+    CASTIMPLTRAIT!();
 }

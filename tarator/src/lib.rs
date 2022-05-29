@@ -6,3 +6,5 @@ pub mod platform;
 
 #[macro_use]
 extern crate bitflags;
+#[macro_use]
+extern crate glium;

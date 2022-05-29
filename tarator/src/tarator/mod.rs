@@ -8,6 +8,7 @@ pub mod event;
 pub mod keycode;
 pub mod application;
 pub mod window;
+#[allow(unused)]
 pub mod render;
 pub mod layer;
 pub mod input;
