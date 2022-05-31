@@ -49,13 +49,14 @@ impl RenderApi for GliumRenderAPI {
         let mut frame = glium::Frame::new(self.ctx.clone(), self.ctx.get_framebuffer_dimensions());
         frame.clear_color(0.8, 0.6, 0.1, 1.0);
 
+        
         for buffer in vertex_array.get_vertex_buffer_iter() {
             frame.draw(
                 &(CAST!(buffer, GliumVertexBuffer).buffer),
                 &(CAST!(vertex_array.index, GliumIndexBuffer).buffer),
                 &self.program,
                 &uniforms,
-&Default::default()
+                &Default::default()
             ).unwrap();
         };
         frame.finish();

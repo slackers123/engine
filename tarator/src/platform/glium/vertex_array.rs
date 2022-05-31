@@ -5,7 +5,10 @@ use crate::{
         *
     },
     core::*,
-    platform::glium::buffer::*
+    platform::glium::{
+        buffer::*,
+        render::*
+    }
 };
 
 pub struct GliumVertexArray {
@@ -37,7 +40,7 @@ impl VertexArray for GliumVertexArray {
 }
 
 impl GliumVertexArray {
-    pub fn new(ctx: SPtr<glium::backend::Context>) -> GliumVertexArray where GliumVertexArray: Sized  {
+    pub fn new(ctx: &SPtr<glium::backend::Context>) -> GliumVertexArray where GliumVertexArray: Sized  {
         return GliumVertexArray {
             vertex: Vector::new(),
             index: SPtr::new(GliumIndexBuffer::new(ctx, &[0]))

@@ -8,9 +8,9 @@ use crate::{
 
 #[derive(Clone, Copy)]
 pub struct GliumVertex {
-    pos: [f32; 2]
+    pub position: [f32; 2]
 }
-implement_vertex!(GliumVertex, pos);
+implement_vertex!(GliumVertex, position);
 
 pub struct GliumVertexBuffer {
     layout: Option<BufferLayout>,
@@ -35,10 +35,10 @@ impl VertexBuffer for GliumVertexBuffer {
 }
 
 impl GliumVertexBuffer {
-    pub fn new(ctx: SPtr<glium::backend::Context>, data: &[GliumVertex], size: u32) -> GliumVertexBuffer {
+    pub fn new(ctx: &SPtr<glium::backend::Context>, data: &[GliumVertex], size: u32) -> GliumVertexBuffer {
         return GliumVertexBuffer {
             layout: None,
-            buffer: glium::VertexBuffer::new(&ctx, data).expect("Failed To Init Glium Vertex Buffer")
+            buffer: glium::VertexBuffer::new(ctx, data).expect("Failed To Init Glium Vertex Buffer")
         };
     }   
 }
@@ -62,10 +62,10 @@ impl IndexBuffer for GliumIndexBuffer {
 }
 
 impl GliumIndexBuffer {
-    pub fn new(ctx: SPtr<glium::backend::Context>, data: &[u32]) -> GliumIndexBuffer {
+    pub fn new(ctx: &SPtr<glium::backend::Context>, data: &[u32]) -> GliumIndexBuffer {
         return GliumIndexBuffer {
             count: data.len() as u32,
-            buffer: glium::IndexBuffer::new(&ctx, glium::index::PrimitiveType::TrianglesList, data).expect("Failed To Init Glium Index Buffer")
+            buffer: glium::IndexBuffer::new(ctx, glium::index::PrimitiveType::TrianglesList, data).expect("Failed To Init Glium Index Buffer")
         };
     }
 }
